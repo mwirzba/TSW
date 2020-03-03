@@ -1,0 +1,43 @@
+
+.container {
+    display: grid;
+    grid-template-columns: 400px 400px 400px;
+    grid-template-rows: 400px 400px 400px;
+    grid-template-areas: "header header header"
+                         "menu body rightbody"
+                         "footer footer footer";
+
+                   
+}
+
+
+header {
+    grid-area: "header";
+    border-style: solid;
+    border-width: thin;
+}
+
+nav {
+    grid-area: "menu";
+    border-style: solid;
+    border-width: thin;
+}
+
+section {
+    grid-area: "body";
+    border-style: solid;
+    border-width: thin;
+}
+
+aside {
+    grid-area: "rightbody";
+    border-style: solid;
+    border-width: thin;
+}
+
+footer{
+    grid-area: "footer";
+    border-style: solid;
+    border-width: thin;
+}
+

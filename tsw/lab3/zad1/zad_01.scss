@@ -1,0 +1,25 @@
+.content {
+    display: grid;
+    grid-template-columns: repeat(5, 100px [col-start]);
+    grid-template-rows: repeat(5, 100px [row-start]);
+}
+
+grid-item:nth-child(2n) {
+    background-color: blue;
+}
+
+.field:nth-child(odd) {
+    background-color: blue;
+    text-align: center;
+    border-style: solid;
+    border-color: black;
+    border-width: thin;
+}
+
+.field:nth-child(even) {
+    background-color: red;
+    text-align: center;
+    border-style: solid;
+    border-color: black;
+    border-width: thin;
+}

@@ -1,0 +1,41 @@
+
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(5, 220px);
+    grid-template-rows: repeat(8, 50px);
+    row-gap: 30px;
+    column-gap: 20px;
+
+    div {
+        text-align: center;
+        border-style: solid;
+        border-width: thin;
+        background-color: moccasin;
+    }
+
+    .item9 {
+        grid-column: 4/6;
+        background-color: seagreen;
+    }
+    
+    .item11 {
+        grid-column-start: 2;
+        grid-row:3/7 ;
+    }
+    
+    .item16 {
+        grid-column: 3/5;
+        grid-row: 4/6;
+        background-color: lightblue;
+    }
+    
+    .item29 {
+        grid-column: 1/5;
+        background-color: lightcoral;
+    }
+    
+
+}
+
+

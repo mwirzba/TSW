@@ -1,10 +1,23 @@
-.main {
+/*.main {
   color: gray;
-  border: 1cm;
+  border-style: solid;
   width: 10cm;
 }
 
-.img {
-  border-block: black;
+body {
+  background-color: grey;
+}*/
+.A {
+  width: 30%;
+  height: 40%;
+  background-color: yellow;
+  border-style: solid;
+  border-color: red;
+}
+
+.B {
+  border-style: solid;
+  border-color: royalblue;
+  background-color: white;
 }
 /*# sourceMappingURL=zad_nn.css.map */
