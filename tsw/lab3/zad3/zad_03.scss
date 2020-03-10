@@ -3,40 +3,41 @@
     display: grid;
     grid-template-columns: 400px 400px 400px;
     grid-template-rows: 400px 400px 400px;
-    grid-template-areas: "header header header"
+    grid-template-areas: "head head head"
                          "menu body rightbody"
                          "footer footer footer";
-
-                   
+    column-gap: 20px;
+    row-gap: 20px;
+                      
 }
 
 
 header {
-    grid-area: "header";
+    grid-area: head;
     border-style: solid;
     border-width: thin;
 }
 
 nav {
-    grid-area: "menu";
+    grid-area: menu;
     border-style: solid;
     border-width: thin;
 }
 
 section {
-    grid-area: "body";
+    grid-area: body;
     border-style: solid;
     border-width: thin;
 }
 
 aside {
-    grid-area: "rightbody";
+    grid-area: rightbody;
     border-style: solid;
     border-width: thin;
 }
 
 footer{
-    grid-area: "footer";
+    grid-area: footer;
     border-style: solid;
     border-width: thin;
 }
