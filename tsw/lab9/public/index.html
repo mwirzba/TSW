@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>Mastermind</title>
     <link rel='stylesheet' href='/css/style.css' />
     <script src='/lib/axios.min.js'></script>
     <script src='/js/skrypt.js'></script>
   </head>
-  <body>
-    <div id="ui">
-      <p>
-        Tutaj znajdzie się interfejs użytkownika gry.
-        Do obsługi odwołań do serwera należy wykorzystać bibliotekę
-        <a href="https://github.com/axios/axios" target="_blank">axios</a>.
-        Zwróć uwagę na to, że narzędzie to zwraca <em>promesy</em>!
-      </p>
-      <p>
-        Interfejs powinien działać bez „przeładowywania strony”. Do jego obsługi
-        należy wykorzystać wyłącznie standardowe metody DOM API.
-      </p>
+    <div class="form" id='form'>
+      Size
+      <input type="text" id="size"/>
+      Dim
+      <input type="text" id="dim"/>
+      Max 
+      <input type="text" id="max"/>
+      <button id="start">Start</button>
+    </div>
+    <div class="plansz">
+      <div class="plansza" id="plansza"></div>
+      <div class="odpowiedz" id="odpowiedz"></div>
+      <input type="text" id="inputText"/>
+      <button id="send">Send</button>
     </div>
   </body>
 </html>

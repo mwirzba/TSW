@@ -15,13 +15,12 @@ const port = process.env.PORT || 3000;
 const secret = process.env.SECRET || "$uper $ecret";
 const env = process.env.NODE_ENV || "development";
 
+const cors = require('cors');
+
 // tworzymy i konfigurujemy obiekt aplikacji
 const app = express();
 
-
-
-
-
+app.use(cors());
 
 // obsługa danych typu application/json
 app.use(express.json());
@@ -31,6 +30,7 @@ app.use(cookieSession({secret: secret}));
 const path = require("path");
 app.use("/lib", express.static(path.normalize("./node_modules/axios/dist")));
 
+
 // middleware do kompilacji SCSS -> CSS
 const sass = require("node-sass-middleware");
 app.use(sass({
@@ -39,7 +39,6 @@ app.use(sass({
     debug: true,
     outputStyle: "compressed",
 }));
-
 
 
 
@@ -67,8 +66,6 @@ app.use((req, res) => {
         error: `Niepoprawne żądanie: ${req.method} ${req.originalUrl}`
     });
 });
-
-
 
 
 // uruchamiamy serwer z aplikacją
