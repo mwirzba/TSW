@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strona główna</title>
+</head>
+<body>
+    <p>
+        <% if (isAuthenticated) { %>
+                Gry użytkownika: <%= user.username %><br>
+                <a href="/logout">Wyloguj</a>
+                <a href="/">Powrót</a>
+                <ul>
+                    <% data.forEach(function(data) { %>
+                        <li>
+                            WYNIK:
+                                <% if(data.result){ %>
+                                Wygrana
+                                <% } %>
+                               <% if(!data.result){ %>
+                                    Porażka
+                                 <% } %>
+                        </li>
+                        <li>Opcje 
+                             Wielkosc planszy: <%= data.size %> Maksymalna ilość ruchów: <%= data.max %> Ilość kolorów: <%= data.size %>
+                        </li>
+                        <li><h3>Wykonane ruchy:</h3>
+                            <ol>
+                                 <% data.moves.forEach(function(data) { %>
+                                     <li>
+                                        [<%= data %>]
+                                    </li>         
+                                <% }); %>
+                            </ol>
+                        </li>
+                    </br>
+                    <% }); %>      
+                </ul>   
+        <% } else { %>
+            <h1>Zaloguj sie aby zobaczyc gry!!</h1>
+            <a href="/login">Login</a>
+        <% } %>
+    </p>
+</body>
+</html>

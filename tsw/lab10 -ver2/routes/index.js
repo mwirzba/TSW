@@ -29,6 +29,7 @@ const rejectMethod = (_req, res, _next) => {
 
 router.route("/")
     .post((req, res) => {
+        console.log(req.user);
         const reqBody =  req.body;
         let options = getDefaultGameOptions();
         if(reqBody.size) {
@@ -58,11 +59,16 @@ router.route("/")
         console.log(game);
         if(comp===true) {
             gameCookiesService.removeUserGame(req);
-            saveGameToDb(game,req);
+            if(req.user) {
+                let doc =  saveGameToDb(game,req);
+            }
+            
         }
         else if(comp===false) {
             gameCookiesService.removeUserGame(req);
-            saveGameToDb(game,req);
+            if(req.user) {
+                let doc = saveGameToDb(game,req);
+            }
         }
         res.json({
             movesLeft: movesLeft,
@@ -126,6 +132,7 @@ router
                if (err) {
                    res.code(500);
                } else {
+                    console.log(data);
                    res.render("games", {
                        isAuthenticated: req.user,
                        user: req.user,
@@ -137,7 +144,7 @@ router
        .all(rejectMethod);
 
 
-    const saveGameToDb = (game,req) => {
+     async  function saveGameToDb(game,req) {
         const userN = req.user.username;
         let gameToSave = new GameSaved({
             userName: userN,
@@ -146,9 +153,11 @@ router
             max: game.options.max,
             solution: game.solution,
             result: game.result,
-            moves: game.moves
+            moves: game.moves,
+            movesLeft: game.movesLetf
         });
-        let doc = gameToSave.save();
+       console.log(req.user);
+        let doc = await gameToSave.save();
         return doc;
     }
 
