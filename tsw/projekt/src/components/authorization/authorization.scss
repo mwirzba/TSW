@@ -1,4 +1,12 @@
 
 .container {
+  align-self: center;
+  margin: auto;
+}
 
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-content: space-evenly;
 }

@@ -1,33 +1,44 @@
 <template>
+  <div id="app">
     <div class="container">
-        <app-header></app-header>
-        <div class="main">
-            <servers></servers>
-            <server-actions></server-actions>
-        </div>
-        <app-footer></app-footer>
+      <app-nav-bar></app-nav-bar>
+      <div class="main">
+        <router-view></router-view>
+      </div>
+      <app-footer></app-footer>
     </div>
+  </div>
 </template>
 
 <script>
-import Header from "@/components/Common/Header.vue";
-import Footer from "@/components/Common/Footer.vue";
-
+import Footer from "./components/footer/Footer.vue";
+import NavBar from "./components/navBar/Navbar.vue";
 export default {
     components: {
-        appHeader: Header,
-        appFooter: Footer
+        appFooter: Footer,
+        appNavBar: NavBar
     }
 };
 </script>
 
 <style lang="scss">
-body {
-    margin: 0;
-    .main {
-        background-color: lightyellow;
-        display: grid;
-        grid-template-columns: 17em auto;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+      color: #42b983;
     }
+  }
 }
 </style>

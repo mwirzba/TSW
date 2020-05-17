@@ -1,0 +1,33 @@
+.container {
+  border-bottom-width: thin;
+  background-color: aliceblue;
+}
+
+.navbar-flex {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  height: 80px;
+}
+
+.navbar-links {
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.navbar-link {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-auth {
+  width: 200px;
+  justify-self: flex-end;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
