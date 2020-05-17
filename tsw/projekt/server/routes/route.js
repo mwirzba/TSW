@@ -5,11 +5,11 @@ router.route("/home")
     .get((req, res) => {
         console.log(req.user);
         var status = req.isAuthenticated() ? "logged in" : "logged out";
-        console.log(
+        /* console.log(
             "status:", status, "\n",
             req.sessionStore,
             req.sessionID,
-            req.session);
+            req.session); */
         return res.json(status);
     });
 
