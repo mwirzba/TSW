@@ -5,6 +5,7 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import VueSocketIOExt from "vue-socket.io-extended";
 import io from "socket.io-client";
+import { store } from "./store/store";
 
 const socket = io("http://localhost:8080");
 
@@ -18,6 +19,7 @@ Vue.use(VueAxios, axiosOpt);
 Vue.config.productionTip = false;
 new Vue({
     router,
+    store,
     render: function (h) {
         return h(App);
     }

@@ -7,16 +7,11 @@ export default {
     data () {
         return {
             username: "",
-            password: ""
+            password: "",
+            logged: this.$store.state.logged
         };
     },
-    created () {
-        /* this.loginMode = this.axios.get("http://localhost:8080/authorization/isLogged")
-            .then(res => {
-                this.loginMode = res;
-            }).catch(err => {
-                console.log(err);
-            }); */
+    mounted () {
         console.log(this.loginMode);
     },
     methods: {
@@ -30,6 +25,7 @@ export default {
             this.axios.post("http://localhost:8080/authorization/login", req)
                 .then(response => {
                     console.log(response);
+                    this.$store.state.logged = true;
                 })
                 .catch(error => {
                     console.log(error.response);

@@ -13,7 +13,7 @@
             <ul class="navbar-auth">
                 <router-link  :to="{ name: 'register' , params: { loginMode: false } }">Register</router-link>
                 <li class="navbar-link"><a>
-                    <router-link v-if="loginMode" :to="{ name: 'login' , params: { loginMode: true } }">Login</router-link>
+                    <router-link v-if="!logged" :to="{ name: 'login' , params: { loginMode: true } }">Login</router-link>
                     <button v-else v-on:click="logOut">Logout</button>
                 </a></li>
             </ul>
