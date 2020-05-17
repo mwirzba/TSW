@@ -1,0 +1,43 @@
+{
+  "name": "cw-vue_01",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "latest",
+    "cors": "^2.8.5",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongoose": "^5.9.14",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-eslint": "~4.3.1",
+    "@vue/cli-plugin-router": "~4.3.1",
+    "@vue/cli-plugin-vuex": "~4.3.1",
+    "@vue/cli-service": "~4.3.1",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "cors": "^2.8.5",
+    "eslint": "^7.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "http-status-codes": "^1.4.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

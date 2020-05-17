@@ -1,0 +1,14 @@
+$main-font: Consolas, Helvetica, Arial, sans-serif;
+
+body {
+    padding: 50px;
+    font-family: $main-font;
+    font-size: 16px;
+    background-color: azure;
+}
+
+#ui {
+    a {
+        color: #00B7FF;
+    }
+}
