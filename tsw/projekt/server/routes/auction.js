@@ -22,17 +22,17 @@ router
 router
     .route("/")
     .post([
-        check("currentPrice").exists().withMessage("price is required"),
+        check("currentPrice").exists().withMessage("Price is required."),
         check("currentPrice").isNumeric().withMessage("Price must be a number."),
-        check("endDate").isAfter("startDate").withMessage("End date must be later than today's"),
-        check("auctionName").exists().isString().withMessage("Auction name is requied."),
+        check("endDate").isAfter("startDate").withMessage("End date must be later than today's."),
+        check("auctionName").exists().isString().withMessage("Auction name is required."),
         check("auctionOwner").exists().isString(),
-        check("startDate").isAfter(todayDate).withMessage("Start date must be later than today")
+        check("startDate").isAfter(todayDate).withMessage("Start date must be later than today.")
     ], async (req, res) => {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.json({ errors: errors.array() });
+                return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
             }
             const { auctionOwner, currentPrice, auctionName, startDate, endDate } = req.body;
             const newAuctionObj = { auctionOwner, currentPrice, auctionName, startDate, endDate };
@@ -56,20 +56,18 @@ router
         check("currentPrice").exists().withMessage("price is required"),
         check("currentPrice").isNumeric().withMessage("Price must be a number."),
         check("endDate").isAfter("startDate").withMessage("End date must be later than today's"),
-        check("auctionName").exists().isString().withMessage("Auction name is requied."),
+        check("auctionName").exists().isString().withMessage("Auction name is required."),
         check("auctionOwner").exists().isString(),
         check("startDate").isBefore("endDate").withMessage("Start date must be before end date")
     ],
     async (req, res) => {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+            }
             const body = req.body;
             const auctionToUpdate = await Auction.find({ auctionName: req.params.auctionName });
-            if (!body) {
-                return res.sendStatus(HttpStatus.BAD_REQUEST);
-            }
-            if (auctionToUpdate && auctionToUpdate.startDate < Date.now) {
-                return res.sendStatus(HttpStatus.BAD_REQUEST).json("Wrong auction start date");
-            }
             if (auctionToUpdate) {
                 auctionToUpdate.auctionName = body.auctionName;
                 auctionToUpdate.currentPrice = body.currentPrice;
@@ -80,9 +78,8 @@ router
                     if (err) {
                         return next(err);
                     }
-                    return res.json(HttpStatus.OK, auction);
+                    return res.json(auction);
                 });
-                return res.json(auctionToUpdate);
             } else {
                 return res.sendStatus(HttpStatus.NOT_FOUND);
             }
