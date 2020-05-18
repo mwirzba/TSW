@@ -30,7 +30,6 @@ const logger = require("morgan");
 const errorHandler = require("errorhandler");
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use(session({ secret: secret }));
 
 const passport = require("./passport");
 app.use(passport.initialize());
