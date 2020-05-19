@@ -5,11 +5,15 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state: {
-        logged: false
+        logged: false,
+        currentUserName: ""
     },
     getters: {
         logged: (state) => {
             return state.logged;
+        },
+        currentUserName: (state) => {
+            return state.currentUserName;
         }
     }
 });

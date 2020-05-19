@@ -22,7 +22,9 @@ app.use(
     session({
         key: "express.sid",
         store: store,
-        secret: secret
+        secret: secret,
+        resave: false,
+        saveUninitialized: false
     })
 );
 
@@ -58,64 +60,52 @@ app.use((req, res) => {
     });
 });
 
+/*
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+
+    // Request headers you wish to allow
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    next();
+});*/
+
+app.set("trust proxy", 1);
+
 const server = require("./https")(app);
-
-const io = require("socket.io")(server);
-
-const passportSocketIo = require("passport.socketio");
-
-
-io.use(passportSocketIo.authorize({
-    cookieParser: cookieParser, // the same middleware you registrer in express
-    key: "express.sid", // the name of the cookie where express/connect stores its session_id
-    secret: secret, // the session_secret to parse the cookie
-    store: store, // we NEED to use a sessionstore. no memorystore please
-    success: onAuthorizeSuccess, // *optional* callback on success - read more below
-    fail: onAuthorizeFail // *optional* callback on fail/error - read more below
-}));
-
-function onAuthorizeSuccess (data, accept) {
-    console.log("successful connection to socket.io");
-
-    // The accept-callback still allows us to decide whether to
-    // accept the connection or not.
-    // accept(null, true);
-
-    // OR
-
-    // If you use socket.io@1.X the callback looks different
-    accept();
-}
-
-function onAuthorizeFail (data, message, error, accept) {
-    if (error) {
-        throw new Error(message);
-    }
-    console.log("failed connection to socket.io:", message);
-
-    // We use this callback to log all of our failed connections.
-    // accept(null, false);
-
-    // OR
-
-    // If you use socket.io@1.X the callback looks different
-    // If you don't want to accept the connection
-    if (error) {
-        accept(new Error(message));
-    }
-    // this error will be sent to the user as a special error-package
-    // see: http://socket.io/docs/client-api/#socket > error-object
-}
-
-io.on("connection", (socket) => {
-    console.log("PODLACZONO");
-    socket.on("chat", (msg) => {
-        socket.emit("chat", msg);
-    });
-});
 
 server.listen(port, () => {
     console.log(`Serwer dostępny na porcie ${port}`);
 });
 
-module.exports = { server, cookieParser, secret, session, store };
+const passportSocketIo = require("passport.socketio");
+
+const io = require("./sockets/sockets").listen(server);
+
+io.use(passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: "express.sid",
+    secret: secret,
+    store: store,
+    success: onAuthorizeSuccess,
+    fail: onAuthorizeFail
+}));
+
+function onAuthorizeSuccess (data, accept) {
+    console.log("successful connection to socket.io");
+    accept();
+}
+
+function onAuthorizeFail (data, message, error, accept) {
+    if (error) {
+        console.log("Error", error);
+    }
+    console.log("failed connection to socket.io:", message);
+    if (error) {
+        accept(new Error(message));
+    }
+}

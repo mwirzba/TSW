@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <div class="container">
+    <div class="main-container">
       <app-nav-bar></app-nav-bar>
-      <div class="main">
+      <div class="body-container">
         <router-view></router-view>
       </div>
       <app-footer></app-footer>
@@ -23,22 +23,18 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+    .main-container{
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 100px auto 50px;
     }
-  }
+    .body-container {
+        background-color: white;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 80%;
+        justify-content: center;
+    }
 }
 </style>

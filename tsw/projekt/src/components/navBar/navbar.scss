@@ -1,13 +1,13 @@
-.container {
+.navbar-container {
   border-bottom-width: thin;
   background-color: aliceblue;
+  min-height: 80px;
 }
 
 .navbar-flex {
   width: 100%;
   display: inline-flex;
   align-items: center;
-  height: 80px;
 }
 
 .navbar-links {

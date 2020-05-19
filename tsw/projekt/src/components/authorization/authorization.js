@@ -26,6 +26,7 @@ export default {
                 .then(response => {
                     console.log(response);
                     this.$store.state.logged = true;
+                    this.$store.state.currentUserName = req.username;
                 })
                 .catch(error => {
                     console.log(error.response);
