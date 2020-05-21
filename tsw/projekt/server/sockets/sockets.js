@@ -4,7 +4,7 @@ const User = require("../models/user");
 
 module.exports.listen = server => {
     const io = socket(server);
-    let onlineUsers = [];
+    const onlineUsers = [];
 
     io.on("connection", socket => {
         let user;
@@ -14,13 +14,33 @@ module.exports.listen = server => {
                 userId: socket.request.user.id,
                 socketId: socket.id
             };
-            onlineUsers.push(user);
+            if (!onlineUsers.find(u => u.username === socket.request.user.username)) {
+                onlineUsers.push(user);
+            }
         }
         console.log("PODLACZONO DO CZATU: " + user.username);
+        console.log(onlineUsers);
+
+        /*
+        socket.on("exitChat", function () {
+            //console.log("PRZED");
+            //console.log(socket.id);
+            //console.log(onlineUsers);
+            const removeIndex = onlineUsers.findIndex(u => u.socketId === socket.id);
+            if (removeIndex > -1) {
+                console.log("WYWALONO");
+                onlineUsers.splice(removeIndex, 1);
+            }
+            //console.log("PO");
+            //console.log(onlineUsers);
+            // socket.disconnect();
+        }); */
+
         socket.on("chat", async (msg) => {
             const destUserInDb = await User.findOne({
                 username: msg.destinationUser
             });
+
             if (msg.length < 0) {
                 socket.emit("chat", "Message is required");
             }
@@ -31,8 +51,6 @@ module.exports.listen = server => {
                     let chat = await Chat.findOne({
                         $or: [{ user1: user.username }, { user2: user.username }]
                     });
-                    console.log("MSG");
-                    console.log(msg);
 
                     if (!msg.message) {
                         msg.message = "";
@@ -52,7 +70,6 @@ module.exports.listen = server => {
                         socket.broadcast
                             .to(destUserOnline.socketId)
                             .emit("chat", [user.username + ": " + msg.message]);
-                        // newMessage.delivered = true;
                         console.log("WYSLANO");
                     }
 
@@ -72,7 +89,6 @@ module.exports.listen = server => {
                     chat.save().then(() => {
                         console.log("zapisano");
                     });
-
                 } catch (error) {
                     console.log(error);
                 }
@@ -120,8 +136,6 @@ module.exports.listen = server => {
                     { $and: [{ user1: chatUser }, { user2: user.username }] }
                 ]
 
-
-
             const chat = await Chat.findOne({
                 $or: [{ user1: user.username }, { user2: user.username }]
             });
@@ -141,11 +155,20 @@ module.exports.listen = server => {
             const chatsedrh = await Chat.find({});
             console.log(chatsedrh);
             socket.emit("chatSelected", chat);
-        });*/
+        }); */
 
-
-        socket.on("usersList", async function () {
+        socket.on("usersList", async function (data) {
             console.log("usersList");
+            console.log("LEFT??");
+            console.log(data);
+            if (data.left === true) {
+                const removeIndex = onlineUsers.findIndex(u => u.username === data.username);
+                if (removeIndex > -1) {
+                    console.log("WYWALONO");
+                    onlineUsers.splice(removeIndex, 1);
+                }
+            }
+
             if (user.username) {
                 const registeredUsers = await User.find({});
                 const userNamesWithStatus = [];
@@ -154,6 +177,7 @@ module.exports.listen = server => {
                     if (onlineUsers.find(onlineUser => onlineUser.username === u.username)) {
                         isOnline = true;
                     }
+
                     userNamesWithStatus.push({
                         isOnline: isOnline,
                         username: u.username,
@@ -170,12 +194,6 @@ module.exports.listen = server => {
                 u => u.username === socket.request.user.username
             );
         }); */
-
-        socket.on("disconnect", function () {
-            onlineUsers = onlineUsers.filter(
-                u => u.username === socket.request.user.username
-            );
-        });
     });
 
     return io;

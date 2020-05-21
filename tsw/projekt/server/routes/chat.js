@@ -3,10 +3,16 @@ const express = require("express");
 const router = express.Router();
 const HttpStatus = require("http-status-codes");
 
-router.route("/")
+router.route("/:userToSend")
     .get(async (req, res) => {
+        const userToSend = req.params.userToSend;
+        console.log("AXIOUS");
+        console.log(userToSend);
         const chat = await Chat.findOne({
-            $or: [{ user1: req.user.username }, { user2: req.user.username }]
+            $or: [
+                { $and: [{ user1: req.user.username }, { user2: userToSend }] },
+                { $and: [{ user1: userToSend }, { user2: req.user.username }] }
+            ]
         });
         if (chat) {
             chat.messages.forEach(msg => {

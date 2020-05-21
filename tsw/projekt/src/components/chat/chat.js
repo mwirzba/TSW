@@ -20,16 +20,9 @@ export default {
             console.log("DOSZLA");
             this.messages.push(msg);
         });
-
         this.socket.on("usersList", (users) => {
+            console.log("ODSWIERZONO LISTE");
             this.usersList = users;
-        });
-        /*
-        this.socket.on("chatSelected", (chats) => {
-            this.messages = [];
-            chats.messages.forEach(c => {
-                this.messages.push([c.sendingUser + ":" + c.message]);
-            });
         });
         /* this.socket.on("newMessages", (res) => {
             res.forEach(msg => {
@@ -53,28 +46,33 @@ export default {
         },
 
         onUserSelected: async function (index) {
-            this.axios.get("http://localhost:8080/chat/").then(chats => {
+            this.userToSend = this.usersList[index].username;
+            this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
                 this.messages = [];
                 chats.data.messages.forEach(c => {
                     this.messages.push([c.sendingUser + ":" + c.message]);
                 });
-                this.userToSend = this.usersList[index].username;
                 console.log("SKONCZONO");
             }).catch(err => console.log(err));
         }
     },
     mounted () {
-        this.socket.emit("usersList");
+        this.socket.emit("usersList", {
+            left: false
+        });
+    },
+    beforeDestroy () {
+        this.socket.emit("usersList", {
+            left: true,
+            username: this.$store.state.currentUserName
+        });
     },
     computed: {
         changedColor: function () {
             return this.width;
         }
-    },
-    beforeDestroy () {
-        this.socket.emit("disconnect");
-        //  this.socket.emit("usersList");
     }
+
     /*
     computed: {
         usersListComputed: {

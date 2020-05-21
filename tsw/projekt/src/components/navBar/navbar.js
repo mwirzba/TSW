@@ -1,5 +1,10 @@
+import io from "socket.io-client";
+
 export default {
     name: "Navbar",
+    created () {
+        this.socket = io("http://localhost:8080");
+    },
     mounted () {
         this.loginMode = this.axios.get("http://localhost:8080/authorization/isLogged")
             .then(res => {
@@ -11,6 +16,10 @@ export default {
     },
     methods: {
         logOut () {
+            this.socket.emit("usersList", {
+                left: true,
+                username: this.$store.state.currentUserName
+            });
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 this.$store.state.logged = false;
                 this.$store.state.currentUserName = "";
