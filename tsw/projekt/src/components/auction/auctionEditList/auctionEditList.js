@@ -8,7 +8,6 @@ export default {
     },
     mounted () {
         if (this.logged) {
-            // const currentUser = this.$store.state.currentUserName;
             this.axios.get("http://localhost:8080/auction/yourAuctions")
                 .then(rsp => {
                     console.log(rsp);

@@ -29,17 +29,54 @@ router
         return res.json(rtn);
     });
 
+function CheckDateErrors (startDate, endDate, auctionToUpdate) {
+    const errors = [];
+    if (!Date.parse(startDate)) {
+        errors.push({
+            msg: "Wrong date format!",
+            param: "startDate",
+            location: "body"
+        });
+    }
+
+    if (!Date.parse(endDate)) {
+        errors.push({
+            msg: "Wrong date format!",
+            param: "endDate",
+            location: "body"
+        });
+    }
+
+    if (endDate < startDate) {
+        errors.push({
+            msg: "End date must be later than start date.",
+            param: "endDate",
+            location: "body"
+        });
+    }
+
+    if (auctionToUpdate && auctionToUpdate.startDate < todayDate) {
+        errors.push({
+            msg: "You cant edit this auction anymore",
+            param: "startDate",
+            location: "body"
+        });
+    }
+    return errors;
+}
+
 router
     .route("/")
     .post([
         check("currentPrice").exists().withMessage("Price is required."),
         check("currentPrice").isNumeric().withMessage("Price must be a number."),
         check("endDate").exists(),
-        check("auctionName").exists().isString().withMessage("Auction name is required."),
-        check("auctionOwner").exists().isString(),
+        check("auctionName").exists().isString().isLength(1).withMessage("Auction name is required."),
+        check("auctionOwner").exists().isString().isLength(1),
         check("startDate").isAfter(todayDate).withMessage("Start date must be later than today.")
-    ], async (req, res) => {
+    ], (req, res) => {
         try {
+            console.log("TUTAJ");
             let errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
@@ -47,31 +84,7 @@ router
 
             const { auctionOwner, currentPrice, auctionName, startDate, endDate } = req.body;
             const newAuctionObj = { auctionOwner, currentPrice, auctionName, startDate, endDate };
-            errors = [];
-            if (!Date.parse(startDate)) {
-                errors.push({
-                    msg: "Wrong date format!",
-                    param: "startDate",
-                    location: "body"
-                });
-            }
-
-            if (!Date.parse(endDate)) {
-                errors.push({
-                    msg: "Wrong date format!",
-                    param: "endDate",
-                    location: "body"
-                });
-            }
-
-            if (endDate < startDate) {
-                errors.push({
-                    msg: "End date must be later than start date.",
-                    param: "endDate",
-                    location: "body"
-                });
-            }
-
+            errors = CheckDateErrors(startDate, endDate);
             if (errors.length > 0) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
             }
@@ -89,48 +102,58 @@ router
     });
 
 router
-    .route("/:auctionName")
+    .route("/:auctionId")
     .put([
-        check("startDate").isBefore(todayDate).withMessage("You cant edit this auction anymore"),
-        check("currentPrice").exists().withMessage("price is required"),
+        check("currentPrice").exists().withMessage("Price is required."),
         check("currentPrice").isNumeric().withMessage("Price must be a number."),
-        check("endDate").isAfter("startDate").withMessage("End date must be later than today's"),
-        check("auctionName").exists().isString().withMessage("Auction name is required."),
-        check("auctionOwner").exists().isString(),
-        check("startDate").isBefore("endDate").withMessage("Start date must be before end date")
+        check("endDate").exists(),
+        check("auctionName").exists().isString().isLength(1).withMessage("Auction name is required."),
+        check("auctionOwner").exists().isString().isLength(1),
+        check("startDate").isAfter(todayDate).withMessage("Start date must be later than today.")
     ],
-    async (req, res) => {
+    (req, res) => {
         try {
-            const errors = validationResult(req);
+            console.log("TUTAJ");
+            let errors = validationResult(req);
+            console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
             }
+            console.log("TUTAJ2");
             const body = req.body;
-            const auctionToUpdate = await Auction.find({ auctionName: req.params.auctionName });
-            if (auctionToUpdate) {
-                auctionToUpdate.auctionName = body.auctionName;
-                auctionToUpdate.currentPrice = body.currentPrice;
-                auctionToUpdate.endDate = body.endDate;
-                auctionToUpdate.startDate = body.startDate;
-                auctionToUpdate.endDate = body.endDate;
-                auctionToUpdate.save((err, auction) => {
-                    if (err) {
-                        return res.json(err);
+            let auctionToUpdate;
+            Auction.findOne({ _id: req.params.auctionId }).then(rtn => {
+                auctionToUpdate = rtn;
+                if (auctionToUpdate) {
+                    errors = CheckDateErrors(body.startDate, body.endDate, auctionToUpdate);
+                    if (errors.length > 0) {
+                        return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send({ errors: errors });
                     }
-                    return res.json(auction);
-                });
-            } else {
-                return res.sendStatus(HttpStatus.NOT_FOUND);
+                    auctionToUpdate.auctionName = body.auctionName;
+                    auctionToUpdate.currentPrice = body.currentPrice;
+                    auctionToUpdate.endDate = body.endDate;
+                    auctionToUpdate.startDate = body.startDate;
+                    auctionToUpdate.endDate = body.endDate;
+                    auctionToUpdate.save((err, auction) => {
+                        if (err) {
+                            return res.json(err);
+                        }
+                        return res.json(auction);
+                    });
+                } else {
+                    return res.status(HttpStatus.NOT_FOUND).json("NIE ZNALEZIONO");
+                }
             }
+            );
         } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json(e.message);
+            return res.json(e.message);
         }
     });
 
 router
-    .route("/:auctionName")
+    .route("/:auctionId")
     .get(async (req, res) => {
-        const rtn = await Auction.find({ auctionName: req.params.auctionName });
+        const rtn = await Auction.findOne({ _id: req.params.auctionId });
         if (rtn) {
             return res.json(rtn);
         } else {

@@ -11,8 +11,8 @@ const rejectMethod = (_req, res, _next) => {
 };
 
 router.post("/login", [
-    check("username").isString().withMessage("User name is required."),
-    check("password").isString().withMessage("Password name is required.")
+    check("username").exists().isString().isLength(1).withMessage("User name is required."),
+    check("password").exists().isString().isLength(1).withMessage("Password name is required.")
 ]
 , (req, res, next) => {
     const errors = validationResult(req);

@@ -47,6 +47,12 @@ const routes = [
         path: "/auctions/yourAuctions",
         name: "yourAuctions",
         component: AutionEditList
+    },
+    {
+        path: "/auctions/yourAuctions/:id",
+        name: "editAuction",
+        component: AutionForm,
+        props: true
     }
 ];
 

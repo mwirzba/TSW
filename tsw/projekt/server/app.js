@@ -60,7 +60,6 @@ app.use((req, res) => {
     });
 });
 
-/*
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:8080");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
@@ -72,7 +71,7 @@ app.use(function (req, res, next) {
     // to the API (e.g. in case you use sessions)
     res.setHeader("Access-Control-Allow-Credentials", true);
     next();
-});*/
+});
 
 app.set("trust proxy", 1);
 

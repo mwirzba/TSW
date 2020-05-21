@@ -1,6 +1,7 @@
 const Chat = require("../models/chat");
 const socket = require("socket.io");
 const User = require("../models/user");
+const Auction = require("../models/auction");
 
 module.exports.listen = server => {
     const io = socket(server);
@@ -20,21 +21,6 @@ module.exports.listen = server => {
         }
         console.log("PODLACZONO DO CZATU: " + user.username);
         console.log(onlineUsers);
-
-        /*
-        socket.on("exitChat", function () {
-            //console.log("PRZED");
-            //console.log(socket.id);
-            //console.log(onlineUsers);
-            const removeIndex = onlineUsers.findIndex(u => u.socketId === socket.id);
-            if (removeIndex > -1) {
-                console.log("WYWALONO");
-                onlineUsers.splice(removeIndex, 1);
-            }
-            //console.log("PO");
-            //console.log(onlineUsers);
-            // socket.disconnect();
-        }); */
 
         socket.on("chat", async (msg) => {
             const destUserInDb = await User.findOne({
@@ -94,6 +80,47 @@ module.exports.listen = server => {
                 }
             }
         });
+
+        socket.on("usersList", async function (data) {
+            console.log("usersList");
+            console.log("LEFT??");
+            console.log(data);
+            if (data.left === true) {
+                const removeIndex = onlineUsers.findIndex(u => u.username === data.username);
+                if (removeIndex > -1) {
+                    console.log("WYWALONO");
+                    onlineUsers.splice(removeIndex, 1);
+                }
+            }
+
+            if (user.username) {
+                const registeredUsers = await User.find({});
+                const userNamesWithStatus = [];
+                registeredUsers.forEach(u => {
+                    let isOnline = false;
+                    if (onlineUsers.find(onlineUser => onlineUser.username === u.username)) {
+                        isOnline = true;
+                    }
+
+                    userNamesWithStatus.push({
+                        isOnline: isOnline,
+                        username: u.username,
+                        newMessages: 0
+                    });
+                });
+                io.sockets.emit("usersList", userNamesWithStatus);
+            }
+        });
+
+        socket.on("auction", async function (data) {
+            const auction = await Auction.findOne({_id: data.auctionId });
+            if (auction) {
+                auction.currentPrice = data.newPrice;
+                io.sockets.emit("auction",auction._id);
+            }
+            await auction.save();
+        });
+
 
         /*
         socket.on("newMessages", async function () {
@@ -157,43 +184,8 @@ module.exports.listen = server => {
             socket.emit("chatSelected", chat);
         }); */
 
-        socket.on("usersList", async function (data) {
-            console.log("usersList");
-            console.log("LEFT??");
-            console.log(data);
-            if (data.left === true) {
-                const removeIndex = onlineUsers.findIndex(u => u.username === data.username);
-                if (removeIndex > -1) {
-                    console.log("WYWALONO");
-                    onlineUsers.splice(removeIndex, 1);
-                }
-            }
 
-            if (user.username) {
-                const registeredUsers = await User.find({});
-                const userNamesWithStatus = [];
-                registeredUsers.forEach(u => {
-                    let isOnline = false;
-                    if (onlineUsers.find(onlineUser => onlineUser.username === u.username)) {
-                        isOnline = true;
-                    }
 
-                    userNamesWithStatus.push({
-                        isOnline: isOnline,
-                        username: u.username,
-                        newMessages: 0
-                    });
-                });
-                io.sockets.emit("usersList", userNamesWithStatus);
-            }
-        });
-
-        /* socket.on("disconnect", () => {
-            console.log("ODLACZONO");
-            onlineUsers = onlineUsers.filter(
-                u => u.username === socket.request.user.username
-            );
-        }); */
     });
 
     return io;
