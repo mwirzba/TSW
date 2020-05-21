@@ -9,5 +9,6 @@ router.route("/home")
 
 router.use("/authorization", require("./authorization").router);
 router.use("/auction", require("./auction").router);
+router.use("/chat" ,require("./chat").router);
 
 module.exports.router = router;

@@ -52,9 +52,15 @@ export default {
             }
         },
 
-        onUserSelected: function (index) {
-            // this.socket.emit("chatSelected");
-            this.userToSend = this.usersList[index].username;
+        onUserSelected: async function (index) {
+            this.axios.get("http://localhost:8080/chat/").then(chats => {
+                this.messages = [];
+                chats.data.messages.forEach(c => {
+                    this.messages.push([c.sendingUser + ":" + c.message]);
+                });
+                this.userToSend = this.usersList[index].username;
+                console.log("SKONCZONO");
+            }).catch(err => console.log(err));
         }
     },
     mounted () {

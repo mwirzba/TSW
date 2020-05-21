@@ -1,11 +1,10 @@
-const Message = require("../models/message").Message;
 const Chat = require("../models/chat");
 const socket = require("socket.io");
 const User = require("../models/user");
 
 module.exports.listen = server => {
     const io = socket(server);
-    const onlineUsers = [];
+    let onlineUsers = [];
 
     io.on("connection", socket => {
         let user;
@@ -57,8 +56,6 @@ module.exports.listen = server => {
                         console.log("WYSLANO");
                     }
 
-                    
-
                     if (!chat) {
                         chat = await new Chat({
                             user1: user.username,
@@ -75,7 +72,6 @@ module.exports.listen = server => {
                     chat.save().then(() => {
                         console.log("zapisano");
                     });
-
 
                 } catch (error) {
                     console.log(error);
@@ -113,6 +109,7 @@ module.exports.listen = server => {
                 io.sockets.emit("newMessages", newMesseges);
             }
         }); */
+
         /*
         socket.on("chatSelected", async function (chatUser) {
             console.log("CHATSELECTED");
@@ -163,7 +160,6 @@ module.exports.listen = server => {
                         newMessages: 0
                     });
                 });
-
                 io.sockets.emit("usersList", userNamesWithStatus);
             }
         });
@@ -175,13 +171,10 @@ module.exports.listen = server => {
             );
         }); */
 
-        socket.on("disconnect", () => {
-            for (let i = 0; i < this.onlineUsers.length; i++) {
-                if (this.onlineUsers[i].socketId === socket.id) {
-                    this.onlineUsers.splice(i, 1);
-                }
-            }
-            this.io.emit("exit", this.onlineUsers);
+        socket.on("disconnect", function () {
+            onlineUsers = onlineUsers.filter(
+                u => u.username === socket.request.user.username
+            );
         });
     });
 
