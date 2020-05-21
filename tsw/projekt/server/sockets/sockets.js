@@ -113,14 +113,13 @@ module.exports.listen = server => {
         });
 
         socket.on("auction", async function (data) {
-            const auction = await Auction.findOne({_id: data.auctionId });
+            const auction = await Auction.findOne({ _id: data.auctionId });
             if (auction) {
                 auction.currentPrice = data.newPrice;
-                io.sockets.emit("auction",auction._id);
+                await auction.save();
+                io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
             }
-            await auction.save();
         });
-
 
         /*
         socket.on("newMessages", async function () {
@@ -183,9 +182,6 @@ module.exports.listen = server => {
             console.log(chatsedrh);
             socket.emit("chatSelected", chat);
         }); */
-
-
-
     });
 
     return io;

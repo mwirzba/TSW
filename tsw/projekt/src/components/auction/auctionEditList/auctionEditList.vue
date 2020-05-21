@@ -16,6 +16,6 @@
 
 </script>
 
-<style lang="scss" src="./auctionEditList.scss">
+<style scoped lang="scss" src="./auctionEditList.scss">
 
 </style>

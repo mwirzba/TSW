@@ -5,6 +5,7 @@ import Chat from "../components/chat/chat.vue";
 import AutionList from "../components/auction/auctionList/auctionList.vue";
 import AutionForm from "../components/auction/auctionForm/auctionForm.vue";
 import AutionEditList from "../components/auction/auctionEditList/auctionEditList.vue";
+import AuctionDetails from "../components/auction/auctionDetails/auctionDetails.vue";
 
 Vue.use(VueRouter);
 
@@ -53,6 +54,11 @@ const routes = [
         name: "editAuction",
         component: AutionForm,
         props: true
+    },
+    {
+        path: "/auctions/:id",
+        name: "auctionDetails",
+        component: AuctionDetails
     }
 ];
 

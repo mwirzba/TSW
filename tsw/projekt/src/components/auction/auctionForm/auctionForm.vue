@@ -31,6 +31,6 @@
 
 </script>
 
-<style lang="scss" src="./auctionForm.scss">
+<style  scoped lang="scss" src="./auctionForm.scss">
 
 </style>

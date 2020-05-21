@@ -6,6 +6,7 @@
             <p>User: {{auction.auctionOwner}}</p>
             <p>Starting: {{auction.startDate}}</p>
             <p>End: {{auction.endDate}}</p>
+            <router-link v-if="new Date(auction.startDate) < new Date()" :to="{ name: 'auctionDetails' , params: { id: auction._id } }">Zobacz</router-link>
         </div>
     </div>
 </div>
@@ -15,6 +16,6 @@
 
 </script>
 
-<style lang="scss" src="./auctionList.scss">
+<style  scoped lang="scss" src="./auctionList.scss">
 
 </style>
