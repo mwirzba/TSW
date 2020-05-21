@@ -29,6 +29,23 @@ router
         return res.json(rtn);
     });
 
+router
+    .route("/observedAuctions")
+    .get(async (req, res) => {
+        if (!req.user) {
+            return res.status(HttpStatus.UNAUTHORIZED).json("You must be logged to see your observed auctions");
+        }
+        const observedAuctions = [];
+        const usr = await User.findOne({ username: req.user.username });
+        if (usr.observedAuctions) {
+            for (const id of usr.observedAuctions) {
+                const auction = await Auction.findById(id);
+                observedAuctions.push(auction);
+            }
+        }
+        return res.json(observedAuctions);
+    });
+
 function CheckDateErrors (startDate, endDate, auctionToUpdate) {
     const errors = [];
     if (!Date.parse(startDate)) {

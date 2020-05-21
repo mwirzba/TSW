@@ -12,7 +12,8 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    observedAuctions: [String]
 });
 
 const uniqueValidator = require("mongoose-unique-validator");

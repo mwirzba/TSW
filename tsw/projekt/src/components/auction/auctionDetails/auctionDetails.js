@@ -59,6 +59,16 @@ export default {
                 auctionId: this.auctionId,
                 newPrice: this.newPrice
             });
+            this.axios.put("http://localhost:8080/addObservedAuctionToUser",
+                {
+                    auctionId: this.auctionId
+                }
+            )
+                .then(rsp => {
+                    console.log(rsp);
+                }).catch(err => {
+                    console.log(err);
+                });
         }
     }
 

@@ -1,7 +1,6 @@
 const Chat = require("../models/chat");
 const express = require("express");
 const router = express.Router();
-const HttpStatus = require("http-status-codes");
 
 router.route("/:userToSend")
     .get(async (req, res) => {

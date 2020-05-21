@@ -19,9 +19,6 @@ module.exports.listen = server => {
                 onlineUsers.push(user);
             }
         }
-        console.log("PODLACZONO DO CZATU: " + user.username);
-        console.log(onlineUsers);
-
         socket.on("chat", async (msg) => {
             const destUserInDb = await User.findOne({
                 username: msg.destinationUser
@@ -52,7 +49,6 @@ module.exports.listen = server => {
                         u => u.username === msg.destinationUser
                     );
                     if (destUserOnline) {
-                        console.log("WYSYLANIE WIADOMOSCI");
                         socket.broadcast
                             .to(destUserOnline.socketId)
                             .emit("chat", [user.username + ": " + msg.message]);
@@ -82,8 +78,6 @@ module.exports.listen = server => {
         });
 
         socket.on("usersList", async function (data) {
-            console.log("usersList");
-            console.log("LEFT??");
             console.log(data);
             if (data.left === true) {
                 const removeIndex = onlineUsers.findIndex(u => u.username === data.username);

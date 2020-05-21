@@ -6,6 +6,7 @@ import AutionList from "../components/auction/auctionList/auctionList.vue";
 import AutionForm from "../components/auction/auctionForm/auctionForm.vue";
 import AutionEditList from "../components/auction/auctionEditList/auctionEditList.vue";
 import AuctionDetails from "../components/auction/auctionDetails/auctionDetails.vue";
+import AuctionPanel from "../components/auction/auctionPanel/auctionPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -59,6 +60,11 @@ const routes = [
         path: "/auctions/:id",
         name: "auctionDetails",
         component: AuctionDetails
+    },
+    {
+        path: "/auctions/auctionsPanel",
+        name: "auctionsPanel",
+        component: AuctionPanel
     }
 ];
 

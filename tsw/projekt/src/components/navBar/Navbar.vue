@@ -12,8 +12,11 @@
                 <li class="navbar-link" v-if="logged">
                     <router-link  :to="{ name: 'yourAuctions' }">Your auctions</router-link>
                 </li>
-                <li class="navbar-link">
+                <li class="navbar-link" v-if="logged">
                   <router-link  :to="{ name: 'chat' }">Chat</router-link>
+                </li>
+                <li class="navbar-link" v-if="logged">
+                    <router-link  :to="{ name: 'auctionsPanel' }">Obserwowane aukcje</router-link>
                 </li>
             </ul>
             <ul class="navbar-auth">

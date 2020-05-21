@@ -35,37 +35,7 @@ router.post("/login", [
         console.log("ZALOGOWANO");
     })(req, res, next);
 }).all(rejectMethod);
-/*
-router
-  .route('/login')
-  .post((req, res, next) => {
-  passport.authenticate('local',
-    (err, user, info) => {
-      if (err) {
-        return res.json({
-            ErrorMessage: err.msg
-        })
-      }
-      req.logIn(user,(err) => {
-        if (err) {
-           res.status(HttpStatus.BAD_REQUEST);
-        }
-        return res.status(HttpStatus.OK).json(user);
-      });
-    })(req, res, next);
-  })
-  .all(rejectMethod);
-/*
-router
-    .route("/login")
-    .get((req, res) => {
-        res.render("login");
-    })
-    .post(passport.authenticate("local"), async (req, res) => {
-        await res.status(HttpStatus.OK);
-    })
-    .all(rejectMethod);
-*/
+
 
 router
     .route("/isLogged")
