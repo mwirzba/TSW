@@ -32,7 +32,7 @@ export default {
                     console.log(error.response);
                 });
         },
-        onRegister () {
+        onRegister: function () {
             const req = {
                 username: this.username,
                 password: this.password
@@ -47,7 +47,7 @@ export default {
                     console.log(error.response);
                 });
         },
-        onsubmit () {
+        onsubmit: function () {
             const self = this;
             if (self.loginMode === true) {
                 self.onLogin();
@@ -56,7 +56,7 @@ export default {
             }
             console.log("KLIKNIETO");
         },
-        onSend () {
+        onSend: function () {
             this.axios.get("http://localhost:8080/home").then((rsp) => {
                 console.log(rsp);
             });

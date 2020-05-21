@@ -1,4 +1,6 @@
 import io from "socket.io-client";
+// import Vue from "vue";
+
 export default {
 
     name: "chat",
@@ -6,25 +8,77 @@ export default {
         return {
             message: "",
             userToSend: "",
-            messages: []
+            messages: [],
+            usersList: [],
+            selectUserIndex: ""
         };
     },
     created () {
+        console.log("STWORZONO");
         this.socket = io("http://localhost:8080");
+        this.socket.on("chat", (msg) => {
+            console.log("DOSZLA");
+            this.messages.push(msg);
+        });
+
+        this.socket.on("usersList", (users) => {
+            this.usersList = users;
+        });
+        /*
+        this.socket.on("chatSelected", (chats) => {
+            this.messages = [];
+            chats.messages.forEach(c => {
+                this.messages.push([c.sendingUser + ":" + c.message]);
+            });
+        });
+        /* this.socket.on("newMessages", (res) => {
+            res.forEach(msg => {
+                const index = this.usersList.findIndex(u => u.username === msg.username);
+                if (index !== -1) {
+                    this.usersList[index].newMessages = msg.newMessages;
+                }
+            });
+        }); */
     },
     methods: {
-        onSend () {
+        onSend: function () {
             console.log("ELO");
-            this.socket.emit("chat", {
-                destinationUser: this.userToSend,
-                message: this.message
-            });
-            this.message = "";
+            if (this.message !== "") {
+                this.socket.emit("chat", {
+                    destinationUser: this.userToSend,
+                    message: this.message
+                });
+                this.message = "";
+            }
+        },
+
+        onUserSelected: function (index) {
+            // this.socket.emit("chatSelected");
+            this.userToSend = this.usersList[index].username;
         }
     },
     mounted () {
-        this.socket.on("chat", (msg) => {
-            this.messages.push(msg);
-        });
+        this.socket.emit("usersList");
+    },
+    computed: {
+        changedColor: function () {
+            return this.width;
+        }
+    },
+    beforeDestroy () {
+        this.socket.emit("disconnect");
+        //  this.socket.emit("usersList");
     }
+    /*
+    computed: {
+        usersListComputed: {
+            get: function () {
+                return this.usersList;
+            },
+            set: function (newValue) {
+                this.usersList = newValue;
+                console.log(this.usersList);
+            }
+        }
+    } */
 };

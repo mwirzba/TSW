@@ -1,4 +1,29 @@
 .chat-container {
+  width: 80%;
   align-self: center;
   margin: auto;
+  display: grid;
+  grid-template-columns: 30% auto;
+  column-gap: 20px;
+}
+
+.users-list-container {
+  height: 100px;
+}
+
+.users-list {
+  overflow-y: scroll;
+}
+
+.list-el {
+  margin-top: 10px;
+}
+
+.red-text {
+  color: red;
+}
+
+.chat {
+  overflow-y: scroll;
+  max-height: 500px;
 }

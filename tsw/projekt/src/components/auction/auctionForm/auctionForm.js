@@ -28,7 +28,7 @@ export default {
         }
     },
     methods: {
-        onsubmit () {
+        onsubmit: async function () {
             const req = {
                 auctionName: this.auctionName,
                 auctionOwner: this.auctionOwner,
@@ -37,12 +37,12 @@ export default {
                 currentPrice: this.currentPrice
             };
             console.log("CLINTED");
-            this.axios.post("http://localhost:8080/auction/", req)
-                .then(rsp => {
-                    console.log(rsp.data.errors);
-                }).catch(err => {
-                    console.log(err);
-                });
+            try {
+                const rsp = await this.axios.post("http://localhost:8080/auction/", req);
+                console.log(rsp);
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 };
