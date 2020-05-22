@@ -11,7 +11,7 @@ export default {
             endHour: "",
             endMinute: "",
             currentPrice: 0,
-            logged: this.$store.state.logged
+            logged: this.$store.state.userData.authenticated
         };
     },
     mounted () {

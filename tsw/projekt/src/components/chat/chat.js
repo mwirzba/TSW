@@ -21,9 +21,9 @@ export default {
             this.messages.push(msg);
         });
         this.socket.on("usersList", (users) => {
-            console.log(this.$store.state.currentUserName);
+            console.log(this.$store.state.userData.username);
             console.log("ODSWIERZONO LISTE");
-            this.usersList = users.filter(u => u.username !== this.$store.state.currentUserName);
+            this.usersList = users.filter(u => u.username !== this.$store.state.userData.username);
         });
         /* this.socket.on("newMessages", (res) => {
             res.forEach(msg => {
@@ -67,9 +67,10 @@ export default {
         });
     },
     beforeDestroy () {
+        console.log("DESTROYED");
         this.socket.emit("usersList", {
             left: true,
-            username: this.$store.state.currentUserName
+            username: this.$store.state.userData.username
         });
     },
     computed: {

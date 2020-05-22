@@ -3,7 +3,7 @@ export default {
     data () {
         return {
             auctions: [],
-            logged: this.$store.state.logged
+            logged: this.$store.state.userData.authenticated
         };
     },
     mounted () {

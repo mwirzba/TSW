@@ -57,7 +57,7 @@ module.exports.listen = server => {
                                     message: msg.message
                                 }
                             );
-                        console.log("WYSLANO do:");
+                        console.log("WYSLANO do:" + destUserOnline.username);
                     }
 
                     if (!chat) {
@@ -112,11 +112,20 @@ module.exports.listen = server => {
         });
 
         socket.on("auction", async function (data) {
-            const auction = await Auction.findOne({ _id: data.auctionId });
-            if (auction) {
-                auction.currentPrice = data.newPrice;
-                await auction.save();
-                io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
+            if (data.auctionId) {
+                try {
+                    console.log(data.auctionId);
+                    const auction = await Auction.findById(data.auctionId);
+                    if (auction) {
+                        auction.currentPrice = data.newPrice;
+                        await auction.save();
+                        io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+
             }
         });
 

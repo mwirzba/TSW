@@ -5,8 +5,8 @@
             <p>Cena: {{auction.currentPrice}}</p>
             <label for="newPrice">Twoja cena</label>
             <input v-model="newPrice" id="newPrice">
-            <button v-on:click="onSubmit()" v-if="this.$store.state.logged">Przebij</button>
-            <p v-if="!this.$store.state.logged">Zaloguj brać udział w aukcji.</p>
+            <button v-on:click="onSubmit()" v-if="this.$store.state.userData.authenticated">Przebij</button>
+            <p v-if="!this.$store.state.userData.authenticated">Zaloguj brać udział w aukcji.</p>
         </form>
     </div>
 </template>

@@ -20,6 +20,9 @@
                 </a>
             </div>
             <div class="navbar-auth">
+                <a class="navbar-link" v-if="logged">
+                  Witaj, {{$store.state.userData.username}}
+                </a>
                 <a class="navbar-link">
                     <router-link  :to="{ name: 'register'}">Rejestracja</router-link>
                 </a>

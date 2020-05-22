@@ -15,7 +15,7 @@ export default {
         if (this.$route.params.id) {
             this.fetchData();
         }
-        if (this.$store.state.logged) {
+        if (this.$store.state.userData.authenticated) {
             this.socket.on("auction", (data) => {
                 if (data.auctionId === this.$route.params.id) {
                     this.auction.currentPrice = data.newPrice;

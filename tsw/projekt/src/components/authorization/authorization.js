@@ -5,7 +5,7 @@ export default {
         return {
             username: "",
             password: "",
-            logged: this.$store.state.logged,
+            logged: this.$store.state.userData.authenticated,
             loginMode: true
         };
     },
@@ -24,8 +24,11 @@ export default {
             this.axios.post("http://localhost:8080/authorization/login", req)
                 .then(response => {
                     console.log(response);
-                    this.$store.state.logged = response.data.isLogged;
-                    this.$store.state.currentUserName = response.data.username;
+                    const userData = {
+                        authenticated: response.data.isLogged,
+                        username: response.data.username
+                    };
+                    this.$store.commit("setUserData", userData);
                     this.$router.push({ name: "auctionsByPage", params: { page: "1" } }).then();
                 })
                 .catch(error => {

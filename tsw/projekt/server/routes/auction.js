@@ -146,7 +146,6 @@ router
         check("startDate").isAfter(todayDate).withMessage("Start date must be later than today.")
     ], (req, res) => {
         try {
-            console.log("TUTAJ");
             let errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
@@ -183,16 +182,24 @@ router
     ],
     (req, res) => {
         try {
-            console.log("TUTAJ");
             let errors = validationResult(req);
             console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
             }
-            console.log("TUTAJ2");
             const body = req.body;
             let auctionToUpdate;
-            Auction.findOne({ _id: req.params.auctionId }).then(rtn => {
+            if (!req.params.auctionId.match(/^[0-9a-fA-F]{24}$/)) {
+                return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json(
+                    {
+                        errors: {
+                            msg: "Wrong id",
+                            param: "startDate",
+                            location: "body"
+                        }
+                    });
+            }
+            Auction.findById(req.params.auctionId).then(rtn => {
                 auctionToUpdate = rtn;
                 if (auctionToUpdate) {
                     errors = CheckDateErrors(body.startDate, body.endDate, auctionToUpdate);
@@ -223,13 +230,12 @@ router
 router
     .route("/:auctionId")
     .get(async (req, res) => {
-        console.log("TUTAJ");
         console.log(req.params.auctionId);
         let rtn;
-        if (req.params.auctionId) {
+        if (req.params.auctionId.match(/^[0-9a-fA-F]{24}$/)) {
             rtn = await Auction.findById(req.params.auctionId);
         } else {
-            res.sendStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+            return res.sendStatus(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (rtn) {
             return res.json(rtn);

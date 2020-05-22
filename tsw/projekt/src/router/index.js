@@ -82,8 +82,11 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    store.commit("retrieveUserData");
+    console.log("REDIRECT");
+    console.log(store.state.userData);
     if (to.matched.some(record => record.meta.requiresLogin)) {
-        if (!store.state.logged) {
+        if (!store.state.userData.authenticated) {
             next({
                 path: "/login",
                 query: { redirect: to.fullPath }

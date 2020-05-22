@@ -6,7 +6,7 @@ export default {
         return {
             auctions: [],
             newPrice: "",
-            isLogged: this.$store.state.logged
+            isLogged: this.$store.state.userData.authenticated
         };
     },
     created () {
