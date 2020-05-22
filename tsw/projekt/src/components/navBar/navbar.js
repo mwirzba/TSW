@@ -22,8 +22,10 @@ export default {
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 this.$store.state.logged = false;
                 this.$store.state.currentUserName = "";
-            }
-            ).catch(err => {
+                if (this.$route.name !== "auctions") {
+                    this.$router.push({ name: "auctions", query: { redirect: "/auctions" } }).then();
+                }
+            }).catch(err => {
                 console.log(err);
             });
         }

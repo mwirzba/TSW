@@ -17,6 +17,7 @@ export default {
                         currentPrice: rsp.data[i].currentPrice,
                         endDate: rsp.data[i].endDate,
                         startDate: rsp.data[i].startDate,
+                        id: rsp.data[i]._id,
                         startViewDate: this.getDate(rsp.data[i].startDate),
                         endViewDate: this.getDate(rsp.data[i].endDate)
                     };

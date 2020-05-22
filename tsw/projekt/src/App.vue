@@ -3,7 +3,7 @@
     <div class="main-container">
       <app-nav-bar></app-nav-bar>
       <div class="body-container">
-        <router-view></router-view>
+        <router-view :key="$route.path"></router-view>
       </div>
       <app-footer></app-footer>
     </div>
@@ -49,12 +49,12 @@ export default {
     button {
         border: none;
         padding: 20px;
-        background-color: #A771FE;
+        background-color: #5199FF;
         display: inline-block;
     }
     button:active {
         padding: 20px;
-        background-color: #6E36CA;
+        background-color: #0260E8;
     }
 
 }

@@ -1,18 +1,17 @@
 
 export default {
     name: "authorization",
-    props: {
-        loginMode: true
-    },
     data () {
         return {
             username: "",
             password: "",
-            logged: this.$store.state.logged
+            logged: this.$store.state.logged,
+            loginMode: true
         };
     },
     mounted () {
-        console.log(this.loginMode);
+        console.log("MOUNTED");
+        this.loginMode = this.$router.currentRoute.name === "login";
     },
     methods: {
         onLogin: function () {
@@ -27,7 +26,7 @@ export default {
                     console.log(response);
                     this.$store.state.logged = response.data.isLogged;
                     this.$store.state.currentUserName = response.data.username;
-                    this.router.replace("auctions");
+                    this.$router.push({ name: "auctions", query: { redirect: "/auctions" } });
                 })
                 .catch(error => {
                     console.log(error.response);
@@ -43,6 +42,7 @@ export default {
             this.axios.post("http://localhost:8080/authorization/register", req)
                 .then(response => {
                     console.log(response);
+                    this.$router.push({ name: "login", query: { redirect: "/login" } });
                 })
                 .catch(error => {
                     console.log(error.response);
@@ -50,7 +50,7 @@ export default {
         },
         onsubmit: function () {
             const self = this;
-            if (self.loginMode === true) {
+            if (this.$router.currentRoute.name === "login") {
                 self.onLogin();
             } else {
                 self.onRegister();

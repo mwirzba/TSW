@@ -4,17 +4,8 @@ export default {
     name: "auctionDetails",
     data () {
         return {
-            auctionName: "",
-            auctionOwner: "",
-            startDate: new Date(),
-            startHour: "",
-            startMinute: "",
-            endDate: new Date(Date.now()),
-            endHour: "",
-            endMinute: "",
-            currentPrice: 0,
-            auctionId: "",
-            newPrice: ""
+            auction: Object,
+            newPrice: 0
         };
     },
     created () {
@@ -27,7 +18,7 @@ export default {
         if (this.$store.state.logged) {
             this.socket.on("auction", (data) => {
                 if (data.auctionId === this.$route.params.id) {
-                    this.currentPrice = data.newPrice;
+                    this.auction.currentPrice = data.newPrice;
                 }
             });
         }
@@ -36,20 +27,9 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
-                    const startDate = rsp.data.startDate;
-                    const endDate = rsp.data.endDate;
-                    this.auctionName = rsp.data.auctionName;
-                    this.auctionOwner = rsp.data.auctionOwner;
-                    this.currentPrice = rsp.data.currentPrice;
-                    this.startDate = new Date(startDate);
-                    this.endDate = new Date(endDate);
-                    this.startHour = this.startDate.getHours();
-                    this.startMinute = this.startDate.getMinutes();
-                    this.endHour = this.endDate.getHours();
-                    this.endMinute = this.endDate.getMinutes();
-                    this.auctionId = rsp.data._id;
-                    this.newPrice = this.currentPrice + 1;
-                    console.log(this.startDate);
+                    console.log(rsp.data);
+                    this.auction = this.getAuctionData(rsp.data);
+                    this.newPrice = this.auction.currentPrice + 1;
                 }).catch(err => {
                     console.log(err);
                 });
@@ -69,6 +49,45 @@ export default {
                 }).catch(err => {
                     console.log(err);
                 });
+        },
+        getAuctionData (data) {
+            return {
+                auctionOwner: data.auctionOwner,
+                auctionName: data.auctionName,
+                currentPrice: data.currentPrice,
+                endDate: data.endDate,
+                startDate: data.startDate,
+                id: data._id,
+                startViewDate: this.getDate(data.startDate),
+                endViewDate: this.getDate(data.endDate)
+            };
+        },
+        getDate: (dateToFormat) => {
+            const date = new Date(dateToFormat);
+            let day = date.getDate();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            let month = date.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            let hour = date.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            let minute = date.getMinutes();
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+            const year = date.getFullYear();
+            const dateString = day + "/" + month + "/" + year;
+
+            return {
+                date: dateString,
+                hour: hour,
+                minute: minute
+            };
         }
     }
 

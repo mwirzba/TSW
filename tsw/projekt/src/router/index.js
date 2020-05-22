@@ -79,11 +79,17 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    console.log(store.state);
-    if (to.matched.some(record => record.meta.requiresLogin) && !store.state.logged) {
-        next("/login");
+    if (to.matched.some(record => record.meta.requiresLogin)) {
+        if (!store.state.logged) {
+            next({
+                path: "/login",
+                query: { redirect: to.fullPath }
+            });
+        } else {
+            next();
+        }
     } else {
-        next();
+        next(); // make sure to always call next()!
     }
 });
 
