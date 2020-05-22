@@ -51,10 +51,13 @@ export default {
             this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
                 console.log(chats);
                 this.messages = [];
-                chats.data.messages.forEach(c => {
-                    this.messages.push([c.sendingUser + ":" + c.message]);
+                chats.data.messages.forEach(m => {
+                    this.messages.push({
+                        sendingUser: m.sendingUser,
+                        message: m.message
+                    });
                 });
-                console.log("SKONCZONO");
+                console.log(this.messages);
             }).catch(err => console.log(err));
         }
     },

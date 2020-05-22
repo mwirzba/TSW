@@ -5,26 +5,29 @@ const router = express.Router();
 
 router.route("/:userToSend")
     .get(async (req, res) => {
-        const userToSend = req.params.userToSend;
-        console.log("AXIOUS");
-        console.log(userToSend);
-        const chat = await Chat.findOne({
-            $or: [
-                { $and: [{ user1: req.user.username }, { user2: userToSend }] },
-                { $and: [{ user1: userToSend }, { user2: req.user.username }] }
-            ]
-        });
-        if (chat) {
-            chat.messages.forEach(msg => {
-                if (!msg.delivered && msg.sendingUser !== req.user.username) {
-                    msg.delivered = true;
-                }
+        if (req.user.username) {
+            const userToSend = req.params.userToSend;
+            console.log("AXIOUS");
+            console.log(userToSend);
+            const chat = await Chat.findOne({
+                $or: [
+                    { $and: [{ user1: req.user.username }, { user2: userToSend }] },
+                    { $and: [{ user1: userToSend }, { user2: req.user.username }] }
+                ]
             });
-            chat.save();
+            if (chat) {
+                chat.messages.forEach(msg => {
+                    if (!msg.delivered && msg.sendingUser !== req.user.username) {
+                        msg.delivered = true;
+                    }
+                });
+                chat.save();
+            }
+            return res.json(chat);
+        } else {
+            return res.sendStatus(404);
         }
-        return res.json(chat);
     });
-
 
 router.route("/users")
     .get(async (req, res) => {
@@ -37,7 +40,7 @@ router.route("/users")
                 userNamesWithStatus.push({
                     username: u.username
                 });
-            });*/
+            }); */
             return res.json(registeredUsers);
         }
         return res.sendStatus(400);

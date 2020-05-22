@@ -1,7 +1,7 @@
 <template>
     <div class="auction-panel-container">
-        <div v-for="(auction,i) in auctions" :key="auction+i" class="auction-element">
-                <form  class="form" v-on:submit.prevent="onSubmit">
+        <div v-for="(auction,i) in auctions" :key="auction+i">
+                <form  class="form-border" v-on:submit.prevent="onSubmit" >
                     <h3>{{auction.auctionName}}</h3>
                     <p>Cena: {{auction.currentPrice}}</p>
                     <label for="newPrice">Twoja cena</label>

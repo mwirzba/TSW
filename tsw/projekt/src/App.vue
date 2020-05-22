@@ -47,11 +47,13 @@ export default {
     }
 
     button {
-        padding: 5px;
+        border: none;
+        padding: 20px;
         background-color: #A771FE;
+        display: inline-block;
     }
-    button:hover {
-        border: 3px solid #555;
+    button:active {
+        padding: 20px;
         background-color: #6E36CA;
     }
 

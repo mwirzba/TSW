@@ -1,11 +1,12 @@
 <template>
 <div class="auction-container">
         <div v-for="(auction,i) in auctions" :key="auction+i" class="auction-element">
-            <p>Produkt: {{auction.auctionName}}</p>
+            <h3>{{auction.auctionName}}</h3>
+            <h4>{{auction.currentPrice}} zł</h4>
             <p>Sprzedawca: {{auction.auctionOwner}}</p>
-            <p>Rozpoczęto: {{auction.startDate}}</p>
-            <p>Koniec: {{auction.endDate}}</p>
-            <router-link v-if="new Date(auction.startDate) < new Date()" :to="{ name: 'auctionDetails' , params: { id: auction._id } }">Zobacz</router-link>
+            <p>Rozpoczęto: {{auction.startViewDate.date}} {{auction.startViewDate.hour}}:{{auction.startViewDate.minute}}</p>
+            <p>Zakończenie aukcji: {{auction.endViewDate.date}} {{auction.endViewDate.hour}}:{{auction.endViewDate.minute}}</p>
+            <router-link v-if="new Date(auction.startDate) < Date.now()" :to="{ name: 'auctionDetails' , params: { id: auction._id } }">Zobacz</router-link>
         </div>
 </div>
 </template>

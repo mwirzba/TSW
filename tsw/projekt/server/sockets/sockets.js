@@ -51,7 +51,12 @@ module.exports.listen = server => {
                     if (destUserOnline) {
                         socket.broadcast
                             .to(destUserOnline.socketId)
-                            .emit("chat", [user.username + ": " + msg.message]);
+                            .emit("chat",
+                                {
+                                    sendingUser: user.username,
+                                    message: msg.message
+                                }
+                            );
                         console.log("WYSLANO do:");
                     }
 

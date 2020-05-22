@@ -1,6 +1,6 @@
 <template>
     <div class="auction-details-container">
-        <form class="form" v-on:submit.prevent="onSubmit">
+        <form class="form-border" v-on:submit.prevent="onSubmit">
             <h3>{{auctionName}}</h3>
             <p>Cena: {{currentPrice}}</p>
             <label for="newPrice">Twoja cena</label>

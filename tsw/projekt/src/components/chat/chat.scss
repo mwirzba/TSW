@@ -1,29 +1,97 @@
 .chat-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
   width: 80%;
   align-self: center;
-  margin: auto;
   display: grid;
-  grid-template-columns: 30% auto;
+  grid-template-columns: auto 70%;
   column-gap: 20px;
+  grid-column: 2;
+  border: solid black;
+  min-height: 300px;
+  justify-content: center;
+  justify-self: center;
+
+  h2 {
+    text-align: end;
+  }
+
 }
 
 .users-list-container {
-  height: 100px;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 10% 90%;
+  border-right: solid black;
+  margin-right: 20px;
+}
+
+.chat {
+  width: auto;
+  padding: 20px;
+}
+
+.chat-list {
+  overflow-y: scroll;
+  max-height: 500px;
+  padding: 0;
+  list-style-type: none;
+}
+
+.chat-form {
+  display: grid;
+  grid-template-rows: 100%;
+  justify-content: space-evenly;
+  grid-template-columns: 80% auto;
+}
+
+button {
+  height: 40px;
+  justify-self: center;
+  text-align: center;
+  align-items: center;
 }
 
 .users-list {
   overflow-y: scroll;
+  padding: 0;
+  list-style-type: none;
 }
 
-.list-el {
+
+.users-element {
+   margin-right: 10px;
+   margin-top: 10px;
+   text-align: left;
+   list-style: none;
+   border-style: solid;
+   border-width: thin;
+   border-radius: 6px;
+   padding: 5px;
+ }
+.users-element:active {
+  background-color: #4A69FF;
+}
+
+.message {
+  width: auto;
   margin-top: 10px;
+  text-align: left;
+  list-style: none;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+a {
+  color: black;
+}
+
+.list {
+  padding-left: 0;
 }
 
 .red-text {
   color: red;
 }
 
-.chat {
-  overflow-y: scroll;
-  max-height: 500px;
-}
+

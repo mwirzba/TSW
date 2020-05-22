@@ -7,6 +7,7 @@ import AutionForm from "../components/auction/auctionForm/auctionForm.vue";
 import AutionEditList from "../components/auction/auctionEditList/auctionEditList.vue";
 import AuctionDetails from "../components/auction/auctionDetails/auctionDetails.vue";
 import AuctionPanel from "../components/auction/auctionPanel/auctionPanel.vue";
+import { store } from "../store/store";
 
 Vue.use(VueRouter);
 
@@ -33,7 +34,8 @@ const routes = [
     {
         path: "/chat",
         name: "chat",
-        component: Chat
+        component: Chat,
+        meta: { requiresLogin: true }
     },
     {
         path: "/auctions",
@@ -43,18 +45,21 @@ const routes = [
     {
         path: "/auctions/new",
         name: "newAuction",
-        component: AutionForm
+        component: AutionForm,
+        meta: { requiresLogin: true }
     },
     {
         path: "/auctions/yourAuctions",
         name: "yourAuctions",
-        component: AutionEditList
+        component: AutionEditList,
+        meta: { requiresLogin: true }
     },
     {
         path: "/auctions/yourAuctions/:id",
         name: "editAuction",
         component: AutionForm,
-        props: true
+        props: true,
+        meta: { requiresLogin: true }
     },
     {
         path: "/auctions/:id",
@@ -64,12 +69,22 @@ const routes = [
     {
         path: "/auctions/auctionsPanel",
         name: "auctionsPanel",
-        component: AuctionPanel
+        component: AuctionPanel,
+        meta: { requiresLogin: true }
     }
 ];
 
 const router = new VueRouter({
     routes
+});
+
+router.beforeEach((to, from, next) => {
+    console.log(store.state);
+    if (to.matched.some(record => record.meta.requiresLogin) && !store.state.logged) {
+        next("/login");
+    } else {
+        next();
+    }
 });
 
 export default router;

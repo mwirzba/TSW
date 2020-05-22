@@ -1,6 +1,6 @@
 <template>
     <div class="auth-container">
-        <form v-on:submit.prevent="onsubmit"  class="form">
+        <form v-on:submit.prevent="onsubmit"  class="form-border">
             <h1 v-if="loginMode">Zaloguj się</h1>
             <h1 v-else>Zajerestruj się</h1>
             <label for="login">Login</label>

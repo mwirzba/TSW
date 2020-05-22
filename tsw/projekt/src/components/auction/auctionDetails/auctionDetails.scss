@@ -1,11 +1,6 @@
 .auction-details-container {
   align-self: center;
   margin: auto;
+  grid-column-start: 2;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-content: space-evenly;
-}

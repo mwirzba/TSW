@@ -25,8 +25,9 @@ export default {
             this.axios.post("http://localhost:8080/authorization/login", req)
                 .then(response => {
                     console.log(response);
-                    this.$store.state.logged = true;
-                    this.$store.state.currentUserName = req.username;
+                    this.$store.state.logged = response.data.isLogged;
+                    this.$store.state.currentUserName = response.data.username;
+                    this.router.replace("auctions");
                 })
                 .catch(error => {
                     console.log(error.response);

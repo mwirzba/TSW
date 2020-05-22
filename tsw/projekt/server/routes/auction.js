@@ -170,7 +170,7 @@ router
 router
     .route("/:auctionId")
     .get(async (req, res) => {
-        const rtn = await Auction.findOne({ _id: req.params.auctionId });
+        const rtn = await Auction.findById(req.auctionId);
         if (rtn) {
             return res.json(rtn);
         } else {

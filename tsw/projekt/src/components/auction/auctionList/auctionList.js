@@ -13,9 +13,12 @@ export default {
                     console.log("DAWAJ");
                     const auction = {
                         auctionOwner: rsp.data[i].auctionOwner,
+                        auctionName: rsp.data[i].auctionName,
                         currentPrice: rsp.data[i].currentPrice,
-                        endDate: this.getDate(rsp.data[i].endDate),
-                        startDate: this.getDate(rsp.data[i].startDate)
+                        endDate: rsp.data[i].endDate,
+                        startDate: rsp.data[i].startDate,
+                        startViewDate: this.getDate(rsp.data[i].startDate),
+                        endViewDate: this.getDate(rsp.data[i].endDate)
                     };
                     this.auctions.push(auction);
                 }
@@ -39,8 +42,22 @@ export default {
             if (month < 10) {
                 month = "0" + month;
             }
+            let hour = date.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            let minute = date.getMinutes();
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
             const year = date.getFullYear();
-            return day + "/" + month + "/" + year;
+            const dateString = day + "/" + month + "/" + year;
+
+            return {
+                date: dateString,
+                hour: hour,
+                minute: minute
+            };
         }
     }
 };

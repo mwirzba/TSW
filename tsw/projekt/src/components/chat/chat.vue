@@ -1,9 +1,9 @@
 <template>
   <div class="chat-container">
       <div class="users-list-container">
-          <h1>Users</h1>
+          <h2>Użytkownicy</h2>
           <ul class="users-list">
-             <li class="list-el" v-for="(user,i) in usersList" :key="user+i">
+             <li class="users-element" v-for="(user,i) in usersList" :key="user+i">
                  <a v-on:click="onUserSelected(i)">
                      {{user.username}}
                  </a>
@@ -12,17 +12,21 @@
       </div>
       <div class="chat">
           <div v-if="userToSend.length>0">
-              <h1>Send message to {{userToSend}}</h1>
-              <form v-on:submit.prevent="onSend" class="form">
-                  <ul>
-                      <li v-for="(msg,i) in messages" :key="msg+i">
-                          {{msg}}
-                      </li>
-                  </ul>
-                  <label for="message">Message</label>
+              <h2>{{userToSend}}</h2>
+              <ul class="chat-list">
+                  <li v-for="(msg,i) in messages" :key="msg+i" class="message">
+                      <p v-bind:style="[ msg.sendingUser === userToSend ? {'text-align':'left'} : {'text-align':'right'}]">
+                          {{msg.message}}
+                      </p>
+                  </li>
+              </ul>
+              <form v-on:submit.prevent="onSend" class="chat-form">
                   <input id="message" type="text" v-model="message">
-                  <button v-on:click="onSend">Send</button>
+                  <button v-on:click="onSend">Wyślij</button>
               </form>
+          </div>
+          <div v-else>
+              <h1>Wybierz użytkownika aby otworzyć czat.</h1>
           </div>
       </div>
   </div>

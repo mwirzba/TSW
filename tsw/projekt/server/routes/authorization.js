@@ -24,13 +24,17 @@ router.post("/login", [
             return next(err);
         }
         if (!passportUser) {
-            return res.status(HttpStatus.UNAUTHORIZED).json("Wrong password or login!");
+            return res.status(HttpStatus.UNAUTHORIZED)
+                .json("Wrong password or login!");
         }
         req.logIn(passportUser, function (err) {
             if (err) {
                 return next(err);
             }
-            return res.sendStatus(HttpStatus.OK);
+            return res.status(HttpStatus.OK).json({
+                isLogged: true,
+                username: passportUser.username
+            });
         });
         console.log("ZALOGOWANO");
     })(req, res, next);
