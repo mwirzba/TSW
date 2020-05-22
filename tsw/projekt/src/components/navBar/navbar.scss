@@ -6,13 +6,15 @@
 }
 
 a {
-  color: white;
   text-align: center;
+  text-decoration: none;
+  font-size: larger;
+  color: white;
   padding: 10px;
 }
 
 a:hover{
-  color: #00CF91;
+  color: #45B8AC;
 }
 
 .navbar-flex {
@@ -24,22 +26,21 @@ a:hover{
 
 .navbar-links {
   width: 600px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  display: inline-flex;
+  justify-content: space-between;
 }
 
 .navbar-link {
+  text-align: center;
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 10px;
 }
 
 .navbar-auth {
   width: 200px;
   justify-self: flex-end;
   margin: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  display: inline-flex;
+  justify-content: space-between;
 }

@@ -5,6 +5,8 @@ const User = require("../models/user");
 const Auction = require("../models/auction");
 const { check, validationResult, body } = require("express-validator");
 
+
+
 const rejectMethod = (_req, res, _next) => {
     res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED);
 };
@@ -20,7 +22,25 @@ router
     });
 
 router
-    .route("/yourAuctions")
+    .route("/pagination/:page")
+    .get(async (req, res) => {
+        const pageSize = 9; // results per page
+        const page = req.params.page || 1; // Page
+        const auctions = await Auction.find({})
+            .skip((pageSize * page) - pageSize)
+            .limit(pageSize);
+        const numberOfItems = await Auction.count();
+        const rtn = {
+            auctions: auctions,
+            numberOfItems: numberOfItems,
+            currentPage: page,
+            pages: Math.ceil(numberOfItems / pageSize)
+        };
+        return res.json(rtn);
+    });
+
+router
+    .route("/yourAuctions/auctions")
     .get(async (req, res) => {
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED).json("You must be logged to see your auctions");
@@ -170,7 +190,9 @@ router
 router
     .route("/:auctionId")
     .get(async (req, res) => {
-        const rtn = await Auction.findById(req.auctionId);
+        console.log("TUTAJ");
+        console.log(req.params.auctionId);
+        const rtn = await Auction.findById(req.params.auctionId);
         if (rtn) {
             return res.json(rtn);
         } else {

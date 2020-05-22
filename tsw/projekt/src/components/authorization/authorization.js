@@ -38,7 +38,6 @@ export default {
                 password: this.password
             };
             console.log(req);
-
             this.axios.post("http://localhost:8080/authorization/register", req)
                 .then(response => {
                     console.log(response);

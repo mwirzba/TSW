@@ -31,3 +31,17 @@ a:hover{
   border-radius: 20px;
   padding: 20px;
 }
+
+.pagination-container{
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-evenly;
+}
+
+.pagination-button {
+  font-weight: bold;
+  font-size: medium;
+  min-width: 60px;
+  min-height: 60px;
+  border: solid thin #2c3e50 !important;
+}

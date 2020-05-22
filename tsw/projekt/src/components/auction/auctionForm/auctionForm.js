@@ -14,10 +14,7 @@ export default {
             logged: this.$store.state.logged
         };
     },
-    props: {
-        id: ""
-    },
-    created () {
+    mounted () {
         console.log("elo");
         /* this.auctionName = "";
         this.auctionOwner = "";
@@ -71,7 +68,7 @@ export default {
             }
         },
         fetchData () {
-            this.axios.get("http://localhost:8080/auction/" + this.id)
+            this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
                     console.log("TUTAJ");
                     const startDate = rsp.data.startDate;

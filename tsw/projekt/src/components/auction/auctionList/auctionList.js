@@ -2,11 +2,18 @@ export default {
     name: "auctionList",
     data () {
         return {
-            auctions: []
+            auctions: [],
+            pages: [1, 2, 3, 4, 5],
+            userAuctions: false
         };
     },
     mounted () {
-        this.axios.get("http://localhost:8080/auction")
+        let reqPath = "http://localhost:8080/auction";
+        if (this.$router.currentRoute.name === "yourAuctions") {
+            reqPath = "http://localhost:8080/auction/yourAuctions/auctions";
+            this.userAuctions = true;
+        }
+        this.axios.get(reqPath)
             .then(rsp => {
                 console.log(rsp.data);
                 for (let i = 0; i < rsp.data.length; i++) {

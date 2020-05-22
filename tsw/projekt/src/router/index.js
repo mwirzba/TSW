@@ -4,7 +4,6 @@ import Authorization from "../components/authorization/authorization.vue";
 import Chat from "../components/chat/chat.vue";
 import AutionList from "../components/auction/auctionList/auctionList.vue";
 import AutionForm from "../components/auction/auctionForm/auctionForm.vue";
-import AutionEditList from "../components/auction/auctionEditList/auctionEditList.vue";
 import AuctionDetails from "../components/auction/auctionDetails/auctionDetails.vue";
 import AuctionPanel from "../components/auction/auctionPanel/auctionPanel.vue";
 import { store } from "../store/store";
@@ -51,14 +50,13 @@ const routes = [
     {
         path: "/auctions/yourAuctions",
         name: "yourAuctions",
-        component: AutionEditList,
+        component: AutionList,
         meta: { requiresLogin: true }
     },
     {
         path: "/auctions/yourAuctions/:id",
         name: "editAuction",
         component: AutionForm,
-        props: true,
         meta: { requiresLogin: true }
     },
     {
@@ -89,7 +87,7 @@ router.beforeEach((to, from, next) => {
             next();
         }
     } else {
-        next(); // make sure to always call next()!
+        next();
     }
 });
 
