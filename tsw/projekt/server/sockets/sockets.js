@@ -19,6 +19,71 @@ module.exports.listen = server => {
                 onlineUsers.push(user);
             }
         }
+
+        socket.on("chat", async (msg) => {
+            const destUserOnline = onlineUsers.find(
+                u => u.username === msg.destinationUser
+            );
+
+            const destUserInDb = await User.findOne({
+                username: msg.destinationUser
+            });
+
+            if (msg.length < 0) {
+                socket.emit("chat", "Message is required");
+            }
+            if (!destUserInDb) {
+                socket.emit("chat", "No user found with given user name.");
+            }
+
+            if (destUserOnline) {
+                socket.broadcast
+                    .to(destUserOnline.socketId)
+                    .emit("chat",
+                        {
+                            sendingUser: user.username,
+                            message: msg.message
+                        }
+                    );
+                console.log("WYSLANO do:" + destUserOnline.username);
+            }
+
+            let chat = await Chat.findOne({
+                $or: [{ user1: user.username }, { user2: user.username }]
+            });
+
+            if (!msg.message) {
+                msg.message = "";
+            }
+
+            const newMessage = {
+                sendingUser: user.username,
+                message: msg.message,
+                delivered: false
+            };
+            try {
+                if (!chat) {
+                    chat = await new Chat({
+                        user1: user.username,
+                        user2: msg.destinationUser
+                    });
+                    chat.messages = {
+                        sendingUser: user.username,
+                        message: newMessage.message,
+                        delivered: newMessage.delivered
+                    };
+                } else {
+                    chat.messages.push(newMessage);
+                }
+                await chat.save();
+            } catch (e) {
+                console.log(e);
+            }
+
+            // console.log(chatInDb);
+        });
+
+        /*
         socket.on("chat", async (msg) => {
             const destUserInDb = await User.findOne({
                 username: msg.destinationUser
@@ -81,6 +146,7 @@ module.exports.listen = server => {
                 }
             }
         });
+        */
 
         socket.on("usersList", async function (data) {
             console.log(data);
@@ -91,7 +157,6 @@ module.exports.listen = server => {
                     onlineUsers.splice(removeIndex, 1);
                 }
             }
-
             if (user.username) {
                 const registeredUsers = await User.find({});
                 const userNamesWithStatus = [];
@@ -100,7 +165,6 @@ module.exports.listen = server => {
                     if (onlineUsers.find(onlineUser => onlineUser.username === u.username)) {
                         isOnline = true;
                     }
-
                     userNamesWithStatus.push({
                         isOnline: isOnline,
                         username: u.username,
@@ -121,11 +185,9 @@ module.exports.listen = server => {
                         await auction.save();
                         io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     console.log(e);
                 }
-
             }
         });
 

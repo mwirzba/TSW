@@ -44,6 +44,9 @@ export default {
                 auctionId: id,
                 newPrice: this.newPrice
             });
+        },
+        beforeDestroy () {
+            this.socket.off("auction");
         }
     }
 };

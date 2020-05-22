@@ -88,6 +88,9 @@ export default {
                 hour: hour,
                 minute: minute
             };
+        },
+        beforeDestroy () {
+            this.socket.off("auction");
         }
     }
 

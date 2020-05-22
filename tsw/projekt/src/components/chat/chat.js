@@ -1,8 +1,10 @@
-import io from "socket.io-client";
+// import io from "socket.io-client";
 // import Vue from "vue";
 
-export default {
+import io from "socket.io-client";
+// const socket = io.connect("http://localhost:8080");
 
+export default {
     name: "chat",
     data () {
         return {
@@ -14,17 +16,7 @@ export default {
         };
     },
     created () {
-        console.log("STWORZONO");
-        this.socket = io("http://localhost:8080");
-        this.socket.on("chat", (msg) => {
-            console.log("DOSZLA");
-            this.messages.push(msg);
-        });
-        this.socket.on("usersList", (users) => {
-            console.log(this.$store.state.userData.username);
-            console.log("ODSWIERZONO LISTE");
-            this.usersList = users.filter(u => u.username !== this.$store.state.userData.username);
-        });
+        this.socket = io.connect("http://localhost:8080", { reconnection: false });
         /* this.socket.on("newMessages", (res) => {
             res.forEach(msg => {
                 const index = this.usersList.findIndex(u => u.username === msg.username);
@@ -32,6 +24,7 @@ export default {
                     this.usersList[index].newMessages = msg.newMessages;
                 }
             });
+
         }); */
     },
     methods: {
@@ -62,12 +55,32 @@ export default {
         }
     },
     mounted () {
+        console.log("MOUNTEDDDDDD");
+        this.socket.on("usersList", (users) => {
+            console.log("ODSWIERZONO LISTE");
+            console.log(users);
+            this.usersList = users.filter(u => u.username !== this.$store.state.userData.username);
+        });
+        this.socket.on("chat", (msg) => {
+            console.log("DOSZLA");
+            this.messages.push(msg);
+        });
         this.socket.emit("usersList", {
             left: false
         });
+
+        /*
+        socket.on("chat", (msg) => {
+            console.log("DOSZLA");
+            this.messages.push(msg);
+        });
+
+         */
     },
     beforeDestroy () {
         console.log("DESTROYED");
+        this.socket.off("usersList");
+        this.socket.off("chat");
         this.socket.emit("usersList", {
             left: true,
             username: this.$store.state.userData.username

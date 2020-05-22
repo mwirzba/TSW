@@ -4,7 +4,7 @@
           <h2>Użytkownicy</h2>
           <ul class="users-list">
              <li class="users-element" v-for="(user,i) in usersList" :key="user+i">
-                 <a v-on:click="onUserSelected(i)">
+                 <a v-on:click="onUserSelected(i)" v-bind:style="[ user.isOnline === true ? {'background-color':'green'} : {'background-color':'red'}]">
                      {{user.username}}
                  </a>
              </li>
