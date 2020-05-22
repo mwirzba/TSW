@@ -21,8 +21,9 @@ export default {
             this.messages.push(msg);
         });
         this.socket.on("usersList", (users) => {
+            console.log(this.$store.state.currentUserName);
             console.log("ODSWIERZONO LISTE");
-            this.usersList = users;
+            this.usersList = users.filter(u => u.username !== this.$store.state.currentUserName);
         });
         /* this.socket.on("newMessages", (res) => {
             res.forEach(msg => {
@@ -48,6 +49,7 @@ export default {
         onUserSelected: async function (index) {
             this.userToSend = this.usersList[index].username;
             this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
+                console.log(chats);
                 this.messages = [];
                 chats.data.messages.forEach(c => {
                     this.messages.push([c.sendingUser + ":" + c.message]);

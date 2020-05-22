@@ -1,6 +1,13 @@
 .auction-form-container {
+  margin-bottom: 20px;
+  margin-top: 20px;
   align-self: center;
-  margin: auto;
+  grid-column: 2;
+  width: 100%;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .form {

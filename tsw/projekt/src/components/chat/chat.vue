@@ -4,7 +4,7 @@
           <h1>Users</h1>
           <ul class="users-list">
              <li class="list-el" v-for="(user,i) in usersList" :key="user+i">
-                 <a v-on:click="onUserSelected(i)" v-bind:class="{ 'red-text': user.isOnline }">
+                 <a v-on:click="onUserSelected(i)">
                      {{user.username}}
                  </a>
              </li>

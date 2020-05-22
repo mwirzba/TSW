@@ -15,10 +15,9 @@ export default {
             });
     },
     methods: {
-        logOut () {
-            this.socket.emit("usersList", {
-                left: true,
-                username: this.$store.state.currentUserName
+        logOut: function () {
+            this.socket.emit("exitFromChat", {
+                left: true
             });
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 this.$store.state.logged = false;

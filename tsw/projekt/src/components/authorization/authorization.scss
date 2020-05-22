@@ -1,12 +1,22 @@
 
 .auth-container {
   align-self: center;
+  justify-self: center;
   margin: auto;
+  height: auto;
+  width: 100%;
+  grid-column: 2;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-content: space-evenly;
+  padding: 30px;
+  width: 100%;
+  border-style: inset;
+  display: grid;
+  row-gap: 10px;
+  max-width: 500px;
 }
+

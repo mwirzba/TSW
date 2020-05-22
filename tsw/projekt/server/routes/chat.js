@@ -1,4 +1,5 @@
 const Chat = require("../models/chat");
+const User = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
@@ -25,13 +26,30 @@ router.route("/:userToSend")
     });
 
 
-module.exports.router = router;
+router.route("/users")
+    .get(async (req, res) => {
+        console.log("GETUSERS");
+        if (req.user) {
+            const registeredUsers = await User.find({});
+            console.log(registeredUsers);
+            /* const userNamesWithStatus = [];
+            registeredUsers.forEach(u => {
+                userNamesWithStatus.push({
+                    username: u.username
+                });
+            });*/
+            return res.json(registeredUsers);
+        }
+        return res.sendStatus(400);
+    });
 
+module.exports.router = router;
 
 /* socket.on("chatSelected", async function (chatUser) {
     console.log("CHATSELECTED");
 
 /*
+    $or: [
     $or: [
         { $and: [{ user1: user.username }, { user2: chatUser }] },
         { $and: [{ user1: chatUser }, { user2: user.username }] }

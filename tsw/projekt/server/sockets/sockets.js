@@ -52,7 +52,7 @@ module.exports.listen = server => {
                         socket.broadcast
                             .to(destUserOnline.socketId)
                             .emit("chat", [user.username + ": " + msg.message]);
-                        console.log("WYSLANO");
+                        console.log("WYSLANO do:");
                     }
 
                     if (!chat) {

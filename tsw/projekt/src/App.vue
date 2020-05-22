@@ -33,8 +33,27 @@ export default {
         background-color: white;
         width: 100%;
         display: grid;
-        grid-template-columns: 80%;
+        grid-template-columns: 10% 80% 10%;
         justify-content: center;
     }
+    input {
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    input:focus {
+        border-radius: 4px;
+        border: 3px solid #555;
+    }
+
+    button {
+        padding: 5px;
+        background-color: #A771FE;
+    }
+    button:hover {
+        border: 3px solid #555;
+        background-color: #6E36CA;
+    }
+
 }
 </style>

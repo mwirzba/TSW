@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <p>&copy;NetAdminStuff</p>
+    <p>&copy;Buyeer</p>
   </footer>
 </template>
 

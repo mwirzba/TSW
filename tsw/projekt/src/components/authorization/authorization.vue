@@ -6,11 +6,10 @@
             <label for="login">Login</label>
             <input id="login" type="text" v-model="username">
             <label for="password">Hasło</label>
-            <input id="password" type="text" v-model="password">
-            <button v-if="loginMode" type="submit">Login</button>
-            <button v-else type="submit">Register</button>
+            <input id="password" type="password" v-model="password">
+            <button v-if="loginMode" type="submit">Zaloguj się</button>
+            <button v-else type="submit">Rejestracja</button>
         </form>
-        <button v-on:click="onSend">Status</button>
     </div>
 </template>
 

@@ -1,11 +1,23 @@
 .navbar-container {
   border-bottom-width: thin;
-  background-color: aliceblue;
+  background-color: #4A69FF;
   min-height: 80px;
+  text-decoration-color: white;
+}
+
+a {
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+a:hover{
+  color: #00CF91;
 }
 
 .navbar-flex {
   width: 100%;
+  height: 100%;
   display: inline-flex;
   align-items: center;
 }

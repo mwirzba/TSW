@@ -1,7 +1,8 @@
 <template>
     <div class="auction-form-container">
         <form v-on:submit.prevent="onsubmit"  class="form">
-            <h1>Add auction</h1>
+            <h1 v-if="this.$route.params.id">Edytuj aukcje</h1>
+            <h1 v-else>Dadaj aukcje</h1>
             <label for="auctionName">Auction name</label>
             <input id="auctionName" type="text" v-model="auctionName">
             <label for="auctionOwner">Auction owner</label>

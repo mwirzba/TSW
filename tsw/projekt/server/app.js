@@ -95,15 +95,15 @@ io.use(passportSocketIo.authorize({
 }));
 
 function onAuthorizeSuccess (data, accept) {
-    console.log("successful connection to socket.io");
+    //console.log("Connected to socked.io");
     accept();
 }
 
 function onAuthorizeFail (data, message, error, accept) {
-    if (error) {
-        console.log("Error", error);
-    }
-    console.log("failed connection to socket.io:", message);
+    //if (error) {
+       // console.log("Error", error);
+    //}
+    //console.log("failed connection to socket.io:", message);
     if (error) {
         accept(new Error(message));
     }
