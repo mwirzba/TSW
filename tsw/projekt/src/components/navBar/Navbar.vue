@@ -4,13 +4,13 @@
         <div class="navbar-flex">
             <div class="navbar-links">
                 <a class="navbar-link">
-                    <router-link  :to="{ name: 'auctions' }">Aukcje</router-link>
+                    <router-link  :to="{ name: 'auctionsByPage' , params: { page: 1 } }">Aukcje</router-link>
                 </a>
                 <a class="navbar-link" v-if="logged">
                     <router-link  :to="{ name: 'newAuction' }">Dodaj Aukcje</router-link>
                 </a>
                 <a class="navbar-link" v-if="logged">
-                    <router-link  :to="{ name: 'yourAuctions' }">Twoje aukcje</router-link>
+                    <router-link  :to="{ name: 'yourAuctions' , params: { page: 1} }">Twoje aukcje</router-link>
                 </a>
                 <a class="navbar-link" v-if="logged">
                     <router-link  :to="{ name: 'auctionsPanel' }">Licytowane aukcje</router-link>

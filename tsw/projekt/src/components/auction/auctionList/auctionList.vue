@@ -10,9 +10,10 @@
             <router-link v-else-if="new Date(auction.startDate) > new Date() && userAuctions" :to="{ name: 'editAuction' , params: { id: auction.id }}">Edytuj</router-link>
         </div>
     <div class="pagination-container">
-        <button class="pagination-button" v-for="(page,i) in pages" :key="page+i">
-            {{page}}
-        </button>
+        <button class="pagination-button " v-on:click="onPageNumber(1)"> << </button>
+        <button class="pagination-button " v-on:click="onPrevPage">POPRZEDNIA</button>
+        <button class="pagination-button" v-on:click="onNextPage">NASTEPNA</button>
+        <button class="pagination-button " v-on:click="onPageNumber(paginationInfo.totalPages)"> >> </button>
     </div>
 </div>
 </template>

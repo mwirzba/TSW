@@ -48,7 +48,7 @@ const routes = [
         meta: { requiresLogin: true }
     },
     {
-        path: "/auctions/yourAuctions",
+        path: "/auctions/yourAuctions/pagination/:page",
         name: "yourAuctions",
         component: AutionList,
         meta: { requiresLogin: true }
@@ -63,6 +63,11 @@ const routes = [
         path: "/auctions/:id",
         name: "auctionDetails",
         component: AuctionDetails
+    },
+    {
+        path: "/auctions/pagination/:page",
+        name: "auctionsByPage",
+        component: AutionList
     },
     {
         path: "/auctions/auctionsPanel",

@@ -5,8 +5,6 @@ const User = require("../models/user");
 const Auction = require("../models/auction");
 const { check, validationResult, body } = require("express-validator");
 
-
-
 const rejectMethod = (_req, res, _next) => {
     res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED);
 };
@@ -24,28 +22,63 @@ router
 router
     .route("/pagination/:page")
     .get(async (req, res) => {
-        const pageSize = 9; // results per page
-        const page = req.params.page || 1; // Page
+        const pageSize = 9;
+        let page = req.params.page || 1;
+        if (page < 1) {
+            page = 1;
+        }
+        page = parseInt(page);
         const auctions = await Auction.find({})
             .skip((pageSize * page) - pageSize)
             .limit(pageSize);
-        const numberOfItems = await Auction.count();
+        const numberOfItems = await Auction.countDocuments();
+        const totalPages = Math.ceil(numberOfItems / pageSize);
+        if (page > totalPages) {
+            page = 1;
+        }
         const rtn = {
             auctions: auctions,
-            numberOfItems: numberOfItems,
-            currentPage: page,
-            pages: Math.ceil(numberOfItems / pageSize)
+            paginationInfo: {
+                numberOfItems: numberOfItems,
+                currentPage: page,
+                totalPages: totalPages,
+                hasPrevious: page !== 1,
+                hasNext: page < totalPages
+            }
         };
         return res.json(rtn);
     });
 
 router
-    .route("/yourAuctions/auctions")
+    .route("/yourAuctions/auctions/:page")
     .get(async (req, res) => {
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED).json("You must be logged to see your auctions");
         }
-        const rtn = await Auction.find({ auctionOwner: req.user.username });
+        const pageSize = 9;
+        let page = req.params.page || 1;
+        if (page < 1) {
+            page = 1;
+        }
+        page = parseInt(page);
+        const auctions = await Auction.find({ auctionOwner: req.user.username })
+            .skip((pageSize * page) - pageSize)
+            .limit(pageSize);
+        const numberOfItems = await Auction.countDocuments({ auctionOwner: req.user.username });
+        const totalPages = Math.ceil(numberOfItems / pageSize);
+        if (page > totalPages) {
+            page = 1;
+        }
+        const rtn = {
+            auctions: auctions,
+            paginationInfo: {
+                numberOfItems: numberOfItems,
+                currentPage: page,
+                totalPages: totalPages,
+                hasPrevious: page !== 1,
+                hasNext: page < totalPages
+            }
+        };
         return res.json(rtn);
     });
 
@@ -192,7 +225,12 @@ router
     .get(async (req, res) => {
         console.log("TUTAJ");
         console.log(req.params.auctionId);
-        const rtn = await Auction.findById(req.params.auctionId);
+        let rtn;
+        if (req.params.auctionId) {
+            rtn = await Auction.findById(req.params.auctionId);
+        } else {
+            res.sendStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (rtn) {
             return res.json(rtn);
         } else {

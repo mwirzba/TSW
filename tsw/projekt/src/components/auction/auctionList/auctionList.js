@@ -3,31 +3,32 @@ export default {
     data () {
         return {
             auctions: [],
-            pages: [1, 2, 3, 4, 5],
-            userAuctions: false
+            userAuctions: false,
+            paginationInfo: Object
         };
     },
     mounted () {
         let reqPath = "http://localhost:8080/auction";
+        reqPath = "http://localhost:8080/auction/pagination/" + this.$router.currentRoute.params.page;
         if (this.$router.currentRoute.name === "yourAuctions") {
-            reqPath = "http://localhost:8080/auction/yourAuctions/auctions";
+            reqPath = "http://localhost:8080/auction/yourAuctions/auctions/" + this.$router.currentRoute.params.page;
             this.userAuctions = true;
         }
         this.axios.get(reqPath)
             .then(rsp => {
-                console.log(rsp.data);
-                for (let i = 0; i < rsp.data.length; i++) {
-                    console.log("DAWAJ");
+                const data = rsp.data;
+                for (let i = 0; i < data.auctions.length; i++) {
                     const auction = {
-                        auctionOwner: rsp.data[i].auctionOwner,
-                        auctionName: rsp.data[i].auctionName,
-                        currentPrice: rsp.data[i].currentPrice,
-                        endDate: rsp.data[i].endDate,
-                        startDate: rsp.data[i].startDate,
-                        id: rsp.data[i]._id,
-                        startViewDate: this.getDate(rsp.data[i].startDate),
-                        endViewDate: this.getDate(rsp.data[i].endDate)
+                        auctionOwner: data.auctions[i].auctionOwner,
+                        auctionName: data.auctions[i].auctionName,
+                        currentPrice: data.auctions[i].currentPrice,
+                        endDate: data.auctions[i].endDate,
+                        startDate: data.auctions[i].startDate,
+                        id: data.auctions[i]._id,
+                        startViewDate: this.getDate(data.auctions[i].startDate),
+                        endViewDate: this.getDate(data.auctions[i].endDate)
                     };
+                    this.paginationInfo = data.paginationInfo;
                     this.auctions.push(auction);
                 }
             }).catch(error => {
@@ -40,7 +41,7 @@ export default {
             });
     },
     methods: {
-        getDate: (dateToFormat) => {
+        getDate (dateToFormat) {
             const date = new Date(dateToFormat);
             let day = date.getDate();
             if (day < 10) {
@@ -66,6 +67,37 @@ export default {
                 hour: hour,
                 minute: minute
             };
+        },
+        onNextPage () {
+            if (this.paginationInfo.hasNext !== false) {
+                const num = (this.paginationInfo.currentPage + 1).toString();
+                let name = "auctionsByPage";
+                if (this.$router.currentRoute.name === "yourAuctions") {
+                    name = "yourAuctions";
+                }
+                this.$router.push({ name: name, params: { page: num } }).then();
+            }
+        },
+        onPrevPage () {
+            if (this.paginationInfo.hasPrevious !== false) {
+                const num = (this.paginationInfo.currentPage - 1).toString();
+                let name = "auctionsByPage";
+                if (this.$router.currentRoute.name === "yourAuctions") {
+                    name = "yourAuctions";
+                }
+                this.$router.push({ name: name, params: { page: num } }).then();
+            }
+        },
+        onPageNumber (pageNumber) {
+            let name = "auctionsByPage";
+            if (this.$router.currentRoute.name === "yourAuctions") {
+                name = "yourAuctions";
+            }
+            this.$router.push({ name: name, params: { page: pageNumber } }).then();
         }
+    },
+    beforeDestroy () {
+
     }
+
 };

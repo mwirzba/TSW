@@ -26,7 +26,7 @@ export default {
                     console.log(response);
                     this.$store.state.logged = response.data.isLogged;
                     this.$store.state.currentUserName = response.data.username;
-                    this.$router.push({ name: "auctions", query: { redirect: "/auctions" } });
+                    this.$router.push({ name: "auctionsByPage", params: { page: "1" } }).then();
                 })
                 .catch(error => {
                     console.log(error.response);
