@@ -24,8 +24,6 @@ router
         }
     });
 
-
-
 router.use("/authorization", require("./authorization").router);
 router.use("/auction", require("./auction").router);
 router.use("/chat", require("./chat").router);

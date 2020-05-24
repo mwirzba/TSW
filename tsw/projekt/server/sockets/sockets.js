@@ -153,7 +153,6 @@ module.exports.listen = server => {
             if (data.left === true) {
                 const removeIndex = onlineUsers.findIndex(u => u.username === data.username);
                 if (removeIndex > -1) {
-                    console.log("WYWALONO");
                     onlineUsers.splice(removeIndex, 1);
                 }
             }
@@ -175,19 +174,20 @@ module.exports.listen = server => {
             }
         });
 
-        socket.on("auction", async function (data) {
+        socket.on("auction", function (data) {
             if (data.auctionId) {
-                try {
-                    console.log(data.auctionId);
-                    const auction = await Auction.findById(data.auctionId);
-                    if (auction) {
+                Auction.findById(data.auctionId).then(auction => {
+                    if (auction && (auction.currentPrice < data.newPrice) && auction.endDate > Date.now()) {
                         auction.currentPrice = data.newPrice;
-                        await auction.save();
-                        io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
+                        auction.userPrice.push({
+                            user: socket.request.user.username,
+                            price: data.newPrice
+                        });
+                        auction.save().then(auction => {
+                            io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
+                        });
                     }
-                } catch (e) {
-                    console.log(e);
-                }
+                });
             }
         });
 

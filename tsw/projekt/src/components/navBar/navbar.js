@@ -3,7 +3,7 @@ import io from "socket.io-client";
 export default {
     name: "Navbar",
     created () {
-        this.socket = io("http://localhost:8080");
+        this.socket = io("http://localhost:8080", { reconnection: false });
         this.$store.commit("retrieveUserData");
     },
     mounted () {

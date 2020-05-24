@@ -9,7 +9,7 @@ export default {
         };
     },
     created () {
-        this.socket = io("http://localhost:8080");
+        this.socket = io("http://localhost:8080", { reconnection: false });
     },
     mounted () {
         if (this.$route.params.id) {
@@ -17,7 +17,8 @@ export default {
         }
         if (this.$store.state.userData.authenticated) {
             this.socket.on("auction", (data) => {
-                if (data.auctionId === this.$route.params.id) {
+                if (data.auctionId === this.auction.id) {
+                    console.log("AUKCJA");
                     this.auction.currentPrice = data.newPrice;
                 }
             });
@@ -27,21 +28,21 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
-                    console.log(rsp.data);
                     this.auction = this.getAuctionData(rsp.data);
                     this.newPrice = this.auction.currentPrice + 1;
                 }).catch(err => {
                     console.log(err);
                 });
         },
-        onSubmit () {
+        onSubmit: function () {
+            console.log("WYSLANO");
             this.socket.emit("auction", {
-                auctionId: this.auctionId,
+                auctionId: this.auction.id,
                 newPrice: this.newPrice
             });
             this.axios.put("http://localhost:8080/addObservedAuctionToUser",
                 {
-                    auctionId: this.auctionId
+                    auctionId: this.auction.id
                 }
             )
                 .then(rsp => {
@@ -56,9 +57,7 @@ export default {
                 auctionName: data.auctionName,
                 currentPrice: data.currentPrice,
                 endDate: data.endDate,
-                startDate: data.startDate,
                 id: data._id,
-                startViewDate: this.getDate(data.startDate),
                 endViewDate: this.getDate(data.endDate)
             };
         },

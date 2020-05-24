@@ -8,8 +8,7 @@ export default {
         };
     },
     mounted () {
-        let reqPath = "http://localhost:8080/auction";
-        reqPath = "http://localhost:8080/auction/pagination/" + this.$router.currentRoute.params.page;
+        let reqPath = "http://localhost:8080/auction/pagination/" + this.$router.currentRoute.params.page;
         if (this.$router.currentRoute.name === "yourAuctions") {
             reqPath = "http://localhost:8080/auction/yourAuctions/auctions/" + this.$router.currentRoute.params.page;
             this.userAuctions = true;
@@ -23,13 +22,13 @@ export default {
                         auctionName: data.auctions[i].auctionName,
                         currentPrice: data.auctions[i].currentPrice,
                         endDate: data.auctions[i].endDate,
-                        startDate: data.auctions[i].startDate,
                         id: data.auctions[i]._id,
-                        startViewDate: this.getDate(data.auctions[i].startDate),
-                        endViewDate: this.getDate(data.auctions[i].endDate)
+                        endViewDate: this.getDate(data.auctions[i].endDate),
+                        userPrice: data.auctions[i].userPrice
                     };
                     this.paginationInfo = data.paginationInfo;
                     this.auctions.push(auction);
+                    console.log(this.$store.state.userData.currentUserName);
                 }
             }).catch(error => {
                 if (error.response) {

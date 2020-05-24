@@ -63,6 +63,6 @@ export default {
             this.axios.get("http://localhost:8080/home").then((rsp) => {
                 console.log(rsp);
             });
-        },
+        }
     }
 };

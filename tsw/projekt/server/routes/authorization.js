@@ -40,7 +40,6 @@ router.post("/login", [
     })(req, res, next);
 }).all(rejectMethod);
 
-
 router
     .route("/isLogged")
     .get((req, res) => {
@@ -48,6 +47,23 @@ router
             return res.json(true);
         } else {
             return res.json(false);
+        }
+    })
+    .all(rejectMethod);
+
+router
+    .route("/userState")
+    .get((req, res) => {
+        if (req.user) {
+            return res.json({
+                username: req.user.username,
+                authenticated: true
+            });
+        } else {
+            return res.json({
+                username: "",
+                authenticated: false
+            });
         }
     })
     .all(rejectMethod);

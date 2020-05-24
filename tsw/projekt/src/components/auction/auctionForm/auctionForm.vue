@@ -5,24 +5,17 @@
             <h1 v-else>Dodaj aukcje</h1>
             <label for="auctionName">Nazwa</label>
             <input id="auctionName" type="text" v-model="auctionName">
-            <label for="auctionOwner">Auction owner</label>
-            <input id="auctionOwner" type="text" v-model="auctionOwner">
             <label for="currentPrice">Cena</label>
             <input id="currentPrice" type="text" v-model="currentPrice">
-            <label for="startDate">Data rozpoczęcia aukcji</label>
-            <input id="startDate" type="date" :value="startDate && startDate.toISOString().split('T')[0]"
-                   @input="startDate = $event.target.valueAsDate">
-            <label for="endDate">Data zakończenia aukcji</label>
-            <input id="endDate" type="date" :value="endDate && endDate.toISOString().split('T')[0]"
-                   @input="endDate = $event.target.valueAsDate">
-            <label for="startHour">Godzina rozpoczęcia aukcji</label>
-            <input id="startHour" type="text" v-model="startHour">
-            <label for="startMinute">Minuta rozpoczęcia aukcji</label>
-            <input id="startMinute" type="text" v-model="startMinute">
-            <label for="endHour">Godzina zakończenia aukcji</label>
-            <input id="endHour" type="text" v-model="endHour">
-            <label for="endMinute">Minuta zakończenia aukcji</label>
-            <input id="endMinute" type="text" v-model="endMinute">
+            <div v-if="!this.$route.params.id">
+                <label for="buyNow">Opcja kup teraz</label>
+                <input type="checkbox" id="buyNow" v-model="buyNow">
+                <div v-if="!buyNow">
+                    <label for="endDate">Data zakończenia aukcji</label>
+                    <input id="endDate" type="date" :value="endDate && endDate.toISOString().split('T')[0]"
+                           @input="endDate = $event.target.valueAsDate">
+                </div>
+            </div>
             <button type="submit">Zatwierdź</button>
         </form>
     </div>

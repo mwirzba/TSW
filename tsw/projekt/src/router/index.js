@@ -83,10 +83,10 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     store.commit("retrieveUserData");
-    console.log("REDIRECT");
-    console.log(store.state.userData);
     if (to.matched.some(record => record.meta.requiresLogin)) {
-        if (!store.state.userData.authenticated) {
+        console.log(store.state.userData);
+        console.log("TUTAJ ROUTE");
+        if (store.state.userData.authenticated === false) {
             next({
                 path: "/login",
                 query: { redirect: to.fullPath }

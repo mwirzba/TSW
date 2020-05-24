@@ -1,4 +1,5 @@
 import io from "socket.io-client";
+// import _ from "lodash";
 
 export default {
     name: "auctionPanel",
@@ -10,13 +11,14 @@ export default {
         };
     },
     created () {
-        this.socket = io("http://localhost:8080");
+        this.socket = io("http://localhost:8080", { reconnection: false });
     },
     mounted () {
         if (this.isLogged) {
             this.fetchData();
             this.socket.on("auction", (data) => {
                 this.auctions.forEach(a => {
+                    console.log("WOWOWOLANIE");
                     if (data.auctionId === a._id) {
                         a.currentPrice = data.newPrice;
                     }
@@ -39,7 +41,7 @@ export default {
                     }
                 });
         },
-        onSubmit (id) {
+        onSubmit: function (id) {
             this.socket.emit("auction", {
                 auctionId: id,
                 newPrice: this.newPrice

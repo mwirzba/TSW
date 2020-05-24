@@ -68,14 +68,6 @@ export default {
         this.socket.emit("usersList", {
             left: false
         });
-
-        /*
-        socket.on("chat", (msg) => {
-            console.log("DOSZLA");
-            this.messages.push(msg);
-        });
-
-         */
     },
     beforeDestroy () {
         console.log("DESTROYED");
@@ -85,23 +77,5 @@ export default {
             left: true,
             username: this.$store.state.userData.username
         });
-    },
-    computed: {
-        changedColor: function () {
-            return this.width;
-        }
     }
-
-    /*
-    computed: {
-        usersListComputed: {
-            get: function () {
-                return this.usersList;
-            },
-            set: function (newValue) {
-                this.usersList = newValue;
-                console.log(this.usersList);
-            }
-        }
-    } */
 };
