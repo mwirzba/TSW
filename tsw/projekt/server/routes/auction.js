@@ -5,10 +5,7 @@ const User = require("../models/user");
 const Auction = require("../models/auction");
 const { check, validationResult } = require("express-validator");
 
-const today = new Date();
-const todayDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-
-function CheckDateErrors (endDate, auctionToUpdate) {
+const checkDateErrors = (endDate, auctionToUpdate) => {
     const errors = [];
     if (!Date.parse(endDate)) {
         errors.push({
@@ -33,7 +30,18 @@ function CheckDateErrors (endDate, auctionToUpdate) {
         });
     }
     return errors;
-}
+};
+
+const checkAuctionData = async (auctions) => {
+    for (const a of auctions) {
+        if (a.endDate < Date.now()) {
+            a.archived = true;
+            a.auctionBuyer = a.userPrice[a.userPrice.length - 1].user;
+            await a.save();
+        }
+    }
+    return auctions;
+};
 
 router
     .route("/pagination/:page")
@@ -49,15 +57,9 @@ router
             .skip((pageSize * page) - pageSize)
             .limit(pageSize);
 
-        for (const a of auctions) {
-            if (a.endDate < Date.now()) {
-                a.archived = true;
-                a.auctionBuyer = a.userPrice[a.userPrice.length - 1].user;
-                await a.save();
-            }
-        }
+        auctions = await checkAuctionData(auctions);
 
-        auctions = auctions.filter(a => !a.archived);
+        auctions.filter(a => !a.archived);
 
         const numberOfItems = await Auction.countDocuments();
         const totalPages = Math.ceil(numberOfItems / pageSize);
@@ -91,10 +93,12 @@ router
             page = 1;
         }
         page = parseInt(page);
-        const auctions = await Auction
+        let auctions = await Auction
             .find({ auctionOwner: req.user.username })
             .skip((pageSize * page) - pageSize)
             .limit(pageSize);
+
+        auctions = await checkAuctionData(auctions);
 
         const numberOfItems = await Auction
             .countDocuments({ auctionOwner: req.user.username });
@@ -127,28 +131,66 @@ router
         const usr = await User.findOne({ username: req.user.username });
         if (usr.observedAuctions) {
             for (const id of usr.observedAuctions) {
-                const auction = await Auction
-                    .find({ $and: [{ _id: id }, { archived: false }, { buyNow: false }] });
-                observedAuctions.push(auction);
+                const auction = await Auction.findOne({ $and: [{ _id: id }, { archived: false }, { buyNow: false }] });
+                if (auction) {
+                    observedAuctions.push(auction);
+                }
             }
         }
         return res.json(observedAuctions);
     });
 
 router
-    .route("/auctionHistory")
+    .route("/auctionHistory/:page")
     .get(async (req, res) => {
+        console.log("HISTORIA");
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED)
                 .json("You must be logged to see your auctions histories");
         }
-        let auctions = await Auction.find({});
+        const pageSize = 9;
+        let page = req.params.page || 1;
+        if (page < 1) {
+            page = 1;
+        }
+        console.log(page);
+        page = parseInt(page);
+        let auctions = await Auction
+            .find({ archived: true })
+            .skip((pageSize * page) - pageSize)
+            .limit(pageSize);
+
+        auctions = await checkAuctionData(auctions);
+
         auctions = auctions.filter(a => {
             return a.auctionBuyer === req.user.username ||
-                a.userPrice.find(u => u.user === req.user.username) !==
-                undefined;
+                a.userPrice.find(u => u.user === req.user.username) !== undefined;
         });
-        return res.json(auctions);
+
+        let allAuctions = await Auction.find({ archived: true });
+        allAuctions = allAuctions.filter(a => {
+            return a.auctionBuyer === req.user.username ||
+                a.userPrice.find(u => u.user === req.user.username) !== undefined;
+        });
+
+        const numberOfItems = allAuctions.length;
+
+        const totalPages = Math.ceil(numberOfItems / pageSize);
+        if (page > totalPages) {
+            page = 1;
+        }
+
+        const rtn = {
+            auctions: auctions,
+            paginationInfo: {
+                numberOfItems: numberOfItems,
+                currentPage: page,
+                totalPages: totalPages,
+                hasPrevious: page !== 1,
+                hasNext: page < totalPages
+            }
+        };
+        return res.json(rtn);
     });
 
 router
@@ -231,7 +273,7 @@ router
                 });
             }
             if (!buyNow) {
-                errors = CheckDateErrors(endDate);
+                errors = checkDateErrors(endDate);
             }
             if (errors.length > 0) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -253,7 +295,7 @@ router
         check("endDate").exists(),
         check("auctionName").exists().isString().isLength(1).withMessage("Auction name is required.")
     ],
-        (req, res) => {
+    async (req, res) => {
         try {
             if (!req.user) {
                 return res.sendStatus(HttpStatus.UNAUTHORIZED);
@@ -270,7 +312,6 @@ router
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: "Price must be greater than zero" });
             }
             const body = req.body;
-            let auctionToUpdate;
             if (!req.params.auctionId.match(/^[0-9a-fA-F]{24}$/)) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json(
                     {
@@ -281,34 +322,28 @@ router
                         }
                     });
             }
-            Auction.findById(req.params.auctionId).then(rtn => {
-                auctionToUpdate = rtn;
-                if (auctionToUpdate) {
-                    if (!body.buyNow) {
-                        errors = CheckDateErrors(body.endDate, auctionToUpdate);
-                    }
-                    if (errors.length > 0) {
-                        return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
-                    }
-                    if (auctionToUpdate.auctionOwner !== req.user.username) {
-                        return res.sendStatus(HttpStatus.UNAUTHORIZED);
-                    }
-                    auctionToUpdate.auctionName = body.auctionName;
-                    auctionToUpdate.description = body.description;
-                    auctionToUpdate.currentPrice = body.currentPrice;
-                    if (body.buyNow === false) {
-                        auctionToUpdate.endDate = body.endDate;
-                    }
-                    auctionToUpdate.save((err, auction) => {
-                        if (err) {
-                            return res.json(err);
-                        }
-                        return res.json(auction);
-                    });
-                } else {
-                    return res.sendStatus(HttpStatus.NOT_FOUND);
+            const auctionToUpdate = await Auction.findById(req.params.auctionId);
+            if (auctionToUpdate) {
+                if (!body.buyNow) {
+                    errors = checkDateErrors(body.endDate, auctionToUpdate);
                 }
-            });
+                if (errors.length > 0) {
+                    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
+                }
+                if (auctionToUpdate.auctionOwner !== req.user.username) {
+                    return res.sendStatus(HttpStatus.UNAUTHORIZED);
+                }
+                auctionToUpdate.auctionName = body.auctionName;
+                auctionToUpdate.description = body.description;
+                auctionToUpdate.currentPrice = body.currentPrice;
+                if (body.buyNow === false) {
+                    auctionToUpdate.endDate = body.endDate;
+                }
+                const auctionInDb = await auctionToUpdate.save();
+                return res.json(auctionInDb);
+            } else {
+                return res.sendStatus(HttpStatus.NOT_FOUND);
+            }
         } catch (e) {
             return res.json(e.message);
         }
@@ -330,7 +365,7 @@ router
                 return res.sendStatus(HttpStatus.NOT_FOUND);
             }
         } catch (e) {
-            console.log(e);
+            return res.json(e.message);
         }
     });
 

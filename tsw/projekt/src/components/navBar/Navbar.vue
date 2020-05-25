@@ -16,6 +16,9 @@
                     <router-link  :to="{ name: 'auctionsPanel' }">Licytowane aukcje</router-link>
                 </a>
                 <a class="navbar-link" v-if="logged">
+                    <router-link  :to="{ name: 'auctionHistory', params: { page: 1} }">Historia zakupów</router-link>
+                </a>
+                <a class="navbar-link" v-if="logged">
                   <router-link  :to="{ name: 'chat' }">Chat</router-link>
                 </a>
             </div>

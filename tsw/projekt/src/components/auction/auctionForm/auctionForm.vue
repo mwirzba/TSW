@@ -7,6 +7,8 @@
             <input id="auctionName" type="text" v-model="auctionName">
             <label for="currentPrice">Cena</label>
             <input id="currentPrice" type="text" v-model="currentPrice">
+            <label for="description">Opis</label>
+            <input id="description" type="text" v-model="description">
             <div v-if="!this.$route.params.id">
                 <label for="buyNow">Opcja kup teraz</label>
                 <input type="checkbox" id="buyNow" v-model="buyNow">

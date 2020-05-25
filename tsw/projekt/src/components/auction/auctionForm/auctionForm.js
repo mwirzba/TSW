@@ -11,6 +11,7 @@ export default {
             endDate: tomorrow,
             currentPrice: 0,
             buyNow: true,
+            description: "",
             logged: this.$store.state.userData.authenticated
         };
     },
@@ -55,9 +56,10 @@ export default {
             this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
                     console.log("TUTAJ");
-                    const endDate = rsp.data.endDate;
+                    const endDate = Date.parse(rsp.data.endDate);
                     this.auctionName = rsp.data.auctionName;
                     this.currentPrice = rsp.data.currentPrice;
+                    this.description = rsp.data.description;
                     this.buyNow = rsp.data.buyNow;
                     if (!this.buyNow) {
                         this.endDate = new Date(endDate);
@@ -71,13 +73,15 @@ export default {
                 return {
                     auctionName: this.auctionName,
                     currentPrice: this.currentPrice,
-                    buyNow: this.buyNow
+                    buyNow: this.buyNow,
+                    description: this.description
                 };
             }
             return {
                 auctionName: this.auctionName,
                 endDate: this.endDate,
                 currentPrice: this.currentPrice,
+                description: this.description,
                 buyNow: this.buyNow
             };
         }

@@ -6,6 +6,8 @@ import AutionList from "../components/auction/auctionList/auctionList.vue";
 import AutionForm from "../components/auction/auctionForm/auctionForm.vue";
 import AuctionDetails from "../components/auction/auctionDetails/auctionDetails.vue";
 import AuctionPanel from "../components/auction/auctionPanel/auctionPanel.vue";
+import AuctionHistory from "../components/auction/auctionHistory/auctionHistory.vue";
+
 import { store } from "../store/store";
 
 Vue.use(VueRouter);
@@ -73,6 +75,12 @@ const routes = [
         path: "/auctions/auctionsPanel",
         name: "auctionsPanel",
         component: AuctionPanel,
+        meta: { requiresLogin: true }
+    },
+    {
+        path: "/auctions/auctionHistory/:page",
+        name: "auctionHistory",
+        component: AuctionHistory,
         meta: { requiresLogin: true }
     }
 ];

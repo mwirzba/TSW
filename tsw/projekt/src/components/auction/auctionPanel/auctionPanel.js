@@ -30,6 +30,7 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/observedAuctions")
                 .then(rsp => {
+                    console.log("TUTAJ PANEL");
                     console.log(rsp);
                     this.auctions = rsp.data;
                 })

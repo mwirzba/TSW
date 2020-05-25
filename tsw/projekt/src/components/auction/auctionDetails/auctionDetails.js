@@ -34,32 +34,56 @@ export default {
                     console.log(err);
                 });
         },
-        onSubmit: function () {
-            console.log("WYSLANO");
-            this.socket.emit("auction", {
-                auctionId: this.auction.id,
-                newPrice: this.newPrice
-            });
-            this.axios.put("http://localhost:8080/addObservedAuctionToUser",
-                {
-                    auctionId: this.auction.id
-                }
-            )
-                .then(rsp => {
+        onSubmit () {
+            if (this.auction.buyNow) {
+                this.axios.get("http://localhost:8080/auction/buyNow/" + this.auction.id)
+                    .then(rsp => {
+                        console.log(rsp);
+                    }).catch(err => {
+                        console.log(err);
+                    });
+            } else {
+                this.socket.emit("auction", {
+                    auctionId: this.auction.id,
+                    newPrice: this.newPrice
+                });
+                this.axios.put("http://localhost:8080/addObservedAuctionToUser",
+                    {
+                        auctionId: this.auction.id
+                    }
+                ).then(rsp => {
                     console.log(rsp);
                 }).catch(err => {
                     console.log(err);
                 });
+            }
         },
         getAuctionData (data) {
-            return {
-                auctionOwner: data.auctionOwner,
-                auctionName: data.auctionName,
-                currentPrice: data.currentPrice,
-                endDate: data.endDate,
-                id: data._id,
-                endViewDate: this.getDate(data.endDate)
-            };
+            let auction;
+            if (data.buyNow) {
+                auction = {
+                    auctionOwner: data.auctionOwner,
+                    auctionName: data.auctionName,
+                    currentPrice: data.currentPrice,
+                    description: data.description,
+                    buyNow: data.buyNow,
+                    archived: data.archived,
+                    id: data._id
+                };
+            } else {
+                auction = {
+                    auctionOwner: data.auctionOwner,
+                    auctionName: data.auctionName,
+                    currentPrice: data.currentPrice,
+                    description: data.description,
+                    buyNow: data.buyNow,
+                    archived: data.archived,
+                    endDate: data.endDate,
+                    id: data._id,
+                    endViewDate: this.getDate(data.endDate)
+                };
+            }
+            return auction;
         },
         getDate: (dateToFormat) => {
             const date = new Date(dateToFormat);
