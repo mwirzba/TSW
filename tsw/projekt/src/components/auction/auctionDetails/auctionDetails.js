@@ -5,7 +5,8 @@ export default {
     data () {
         return {
             auction: Object,
-            newPrice: 0
+            newPrice: 0,
+            submitted: false
         };
     },
     created () {
@@ -18,8 +19,8 @@ export default {
         if (this.$store.state.userData.authenticated) {
             this.socket.on("auction", (data) => {
                 if (data.auctionId === this.auction.id) {
-                    console.log("AUKCJA");
                     this.auction.currentPrice = data.newPrice;
+                    this.submitted = false;
                 }
             });
         }
@@ -35,6 +36,7 @@ export default {
                 });
         },
         onSubmit () {
+            this.submitted = true;
             if (this.auction.buyNow) {
                 this.axios.get("http://localhost:8080/auction/buyNow/" + this.auction.id)
                     .then(rsp => {
@@ -114,6 +116,11 @@ export default {
         },
         beforeDestroy () {
             this.socket.off("auction");
+        }
+    },
+    computed: {
+        inputValid () {
+            return !isNaN(parseFloat(this.newPrice)) && !isNaN(this.newPrice - 0) && this.newPrice > this.auction.currentPrice;
         }
     }
 

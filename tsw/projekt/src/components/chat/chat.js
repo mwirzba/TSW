@@ -12,20 +12,12 @@ export default {
             userToSend: "",
             messages: [],
             usersList: [],
+            newMessages: [],
             selectUserIndex: ""
         };
     },
     created () {
         this.socket = io.connect("http://localhost:8080", { reconnection: false });
-        /* this.socket.on("newMessages", (res) => {
-            res.forEach(msg => {
-                const index = this.usersList.findIndex(u => u.username === msg.username);
-                if (index !== -1) {
-                    this.usersList[index].newMessages = msg.newMessages;
-                }
-            });
-
-        }); */
     },
     methods: {
         onSend: function () {
@@ -35,12 +27,25 @@ export default {
                     destinationUser: this.userToSend,
                     message: this.message
                 });
+                console.log(this.$store.state.username);
+                this.messages.push({
+                    sendingUser: this.$store.state.userData.username,
+                    message: this.message
+                });
+                this.scrollToEnd();
                 this.message = "";
             }
         },
-
-        onUserSelected: async function (index) {
-            this.userToSend = this.usersList[index].username;
+        scrollToEnd () {
+            const container = document.querySelector(".chat-list");
+            if (container !== null) {
+                container.scrollTop = container.scrollHeight;
+            }
+        },
+        onUserSelected: function (event) {
+            console.log("WYWOwolano");
+            // this.userToSend = this.usersList[index].username;
+            this.userToSend = event.target.value;
             this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
                 console.log(chats);
                 this.messages = [];
@@ -55,19 +60,24 @@ export default {
         }
     },
     mounted () {
-        console.log("MOUNTEDDDDDD");
         this.socket.on("usersList", (users) => {
-            console.log("ODSWIERZONO LISTE");
             console.log(users);
             this.usersList = users.filter(u => u.username !== this.$store.state.userData.username);
         });
         this.socket.on("chat", (msg) => {
-            console.log("DOSZLA");
             this.messages.push(msg);
+            this.scrollToEnd();
         });
         this.socket.emit("usersList", {
             left: false
         });
+        this.axios.put("http://localhost:8080/chat/newMessages")
+            .then(messages => {
+                console.log("nowe wiadomosci");
+                console.log(messages.data);
+                console.log(messages.data.length);
+                this.messages = messages.data;
+            }).catch(err => console.log(err));
     },
     beforeDestroy () {
         console.log("DESTROYED");

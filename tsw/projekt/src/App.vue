@@ -36,6 +36,7 @@ export default {
         grid-template-columns: 10% 80% 10%;
         justify-content: center;
     }
+
     input {
         border-radius: 4px;
         padding: 10px;

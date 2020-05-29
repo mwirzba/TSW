@@ -4,94 +4,98 @@
   width: 80%;
   align-self: center;
   display: grid;
-  grid-template-columns: auto 70%;
+  grid-template-columns: 100%;
   column-gap: 20px;
   grid-column: 2;
-  border: solid black;
-  min-height: 300px;
+  height: auto;
+  border: 10px inset #1C6EA4;
+  min-height: 700px;
   justify-content: center;
   justify-self: center;
-
   h2 {
     text-align: end;
+  }
+}
+
+
+.select-list {
+  width: 100%;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.select-container {
+  width: 100%;
+  height: 50px;
+  display: grid;
+
+  select{
+    text-align-last:right;
+    padding-right: 29px;
+    direction: rtl;
+    height: 50px;
+    font-size: 200%;
+  }
+
+  option {
+    height: 50px;
   }
 
 }
 
-.users-list-container {
-  width: 100%;
-  display: grid;
-  grid-template-rows: 10% 90%;
-  border-right: solid black;
-  margin-right: 20px;
-}
 
 .chat {
-  width: auto;
-  padding: 20px;
+  margin-top: 0;
+  height: 600px;
+  margin-bottom: 10px;
 }
 
 .chat-list {
+  margin-block-start: 0;
+  margin-block-end: 0;
   overflow-y: scroll;
-  max-height: 500px;
-  padding: 0;
+  height: 600px;
   list-style-type: none;
+  padding-inline-start: 20px;
 }
 
 .chat-form {
+  margin-top: 8px;
+  height: 50px;
+  width: 100%;
   display: grid;
-  grid-template-rows: 100%;
-  justify-content: space-evenly;
-  grid-template-columns: 80% auto;
 }
 
-button {
-  height: 40px;
-  justify-self: center;
-  text-align: center;
-  align-items: center;
-}
-
-.users-list {
-  overflow-y: scroll;
-  padding: 0;
-  list-style-type: none;
-}
-
-
-.users-element {
-   margin-right: 10px;
-   margin-top: 10px;
-   text-align: left;
-   list-style: none;
-   border-style: solid;
-   border-width: thin;
-   border-radius: 6px;
-   padding: 5px;
- }
-.users-element:active {
-  background-color: #4A69FF;
-}
-
-.message {
+.chat-element {
   width: auto;
   margin-top: 10px;
   text-align: left;
   list-style: none;
-  padding: 5px;
-  margin-right: 10px;
+  margin-right: 20px;
+
+  input[type="text"]
+  {
+    font-size:24px;
+  }
+}
+
+.message-text {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 50% 50%;
+  grid-row-gap: 5px;
+}
+
+.nick {
+  color: #FC9A40;
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.message {
+  font-size: 20px;
 }
 
 a {
   color: black;
 }
-
-.list {
-  padding-left: 0;
-}
-
-.red-text {
-  color: red;
-}
-
-

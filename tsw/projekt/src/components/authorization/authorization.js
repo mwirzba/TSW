@@ -6,7 +6,9 @@ export default {
             username: "",
             password: "",
             logged: this.$store.state.userData.authenticated,
-            loginMode: true
+            loginMode: true,
+            submitted: false,
+            wrongLogin: false
         };
     },
     mounted () {
@@ -19,8 +21,6 @@ export default {
                 username: this.username,
                 password: this.password
             };
-            console.log(req);
-
             this.axios.post("http://localhost:8080/authorization/login", req)
                 .then(response => {
                     console.log(response);
@@ -40,7 +40,6 @@ export default {
                 username: this.username,
                 password: this.password
             };
-            console.log(req);
             this.axios.post("http://localhost:8080/authorization/register", req)
                 .then(response => {
                     console.log(response);
@@ -48,21 +47,38 @@ export default {
                 })
                 .catch(error => {
                     console.log(error.response);
+                    if (error.status === 401) {
+                        this.wrongLogin = true;
+                    }
                 });
         },
         onsubmit: function () {
-            const self = this;
-            if (this.$router.currentRoute.name === "login") {
-                self.onLogin();
-            } else {
-                self.onRegister();
+            this.submitted = true;
+            const formIsValid = this.loginValid && this.passwordValid;
+            if (formIsValid) {
+                const self = this;
+                if (this.$router.currentRoute.name === "login") {
+                    self.onLogin();
+                } else {
+                    self.onRegister();
+                }
             }
-            console.log("KLIKNIETO");
         },
         onSend: function () {
             this.axios.get("http://localhost:8080/home").then((rsp) => {
                 console.log(rsp);
             });
+        }
+    },
+    computed: {
+        loginValid () {
+            return !!this.username;
+        },
+        passwordValid () {
+            return !!this.password;
+        },
+        loginDataValid () {
+            return this.wrongLogin && !this.passwordValid && !this.loginValid;
         }
     }
 };

@@ -7,7 +7,7 @@ export default {
         this.$store.commit("retrieveUserData");
     },
     mounted () {
-        this.loginMode = this.axios.get("http://localhost:8080/authorization/isLogged")
+        this.axios.get("http://localhost:8080/authorization/isLogged")
             .then(res => {
                 this.$store.state.userData.authenticated = res.data;
                 console.log();
@@ -17,10 +17,10 @@ export default {
     },
     methods: {
         logOut: function () {
-            // this.socket.emit("usersList", {
-            //    left: true,
-            //    username: this.$store.state.userData.username
-            // });
+            this.socket.emit("usersList", {
+                left: true,
+                username: this.$store.state.userData.username
+            });
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 const userData = {
                     authenticated: false,

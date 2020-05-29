@@ -8,8 +8,6 @@ router.route("/:userToSend")
         try {
             if (req.user.username) {
                 const userToSend = req.params.userToSend;
-                console.log("AXIOUS");
-                console.log(userToSend);
                 const chat = await Chat.findOne({
                     $or: [
                         { $and: [{ user1: req.user.username }, { user2: userToSend }] },
@@ -22,7 +20,7 @@ router.route("/:userToSend")
                             msg.delivered = true;
                         }
                     });
-                    await chat.save();
+                    await chat.save().then().catch(err => console.log(err));
                 }
                 return res.json(chat);
             } else {
@@ -33,12 +31,45 @@ router.route("/:userToSend")
         }
     });
 
+router.route("/newMessages")
+    .put(async (req, res) => {
+        try {
+            if (req.user.username) {
+                const chats = await Chat.find({
+                    $or: [
+                        { user1: req.user.username },
+                        { user2: req.user.username }
+                    ]
+                });
+                const newMessages = [];
+                if (chats.length) {
+                    chats.forEach(c => {
+                        c.messages.forEach(msg => {
+                            if (!msg.delivered && msg.sendingUser !== req.user.username) {
+                                msg.delivered = true;
+                                newMessages.push({
+                                    sendingUser: msg.sendingUser,
+                                    message: msg.message
+                                });
+                            }
+                        });
+                        c.save().then().catch(err => console.log(err));
+                    });
+                }
+                return res.json(newMessages);
+            } else {
+                return res.sendStatus(404);
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    });
+
 router.route("/users")
     .get(async (req, res) => {
         console.log("GETUSERS");
         if (req.user) {
             const registeredUsers = await User.find({});
-            console.log(registeredUsers);
             return res.json(registeredUsers);
         }
         return res.sendStatus(400);

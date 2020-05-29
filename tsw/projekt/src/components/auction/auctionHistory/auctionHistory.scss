@@ -1,12 +1,18 @@
 .auction-container {
   margin-top: 20px;
   margin-bottom: 20px;
-  width: 100%;
+  width: 80%;
   justify-content: center;
   grid-column: 2;
-  display: grid;
+  justify-self: center;
   justify-items: center;
-  row-gap: 20px;
+  grid-row-gap: 20px;
+}
+
+.header {
+  color: #FC9A40;
+  font-weight: bolder;
+  font-size: 25px;
 }
 
 
@@ -20,12 +26,17 @@ a:hover{
   color: #4A69FF;
 }
 
+.auction-list {
+  display: grid;
+  grid-row-gap: 20px;
+}
+
 .auction-element {
+  margin-top: 10px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
-  min-width: 350px;
   height: auto;
   border: 5px solid #1C6EA4;
   border-radius: 20px;
@@ -35,13 +46,28 @@ a:hover{
 .pagination-container{
   width: 100%;
   display: inline-flex;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
 .pagination-button {
-  font-weight: bold;
+  margin-top: 20px;
+  color: white;
+  font-weight: bolder;
   font-size: medium;
   min-width: 60px;
   min-height: 60px;
-  border: solid thin #2c3e50 !important;
+  border: solid thin #1C6EA4 !important;
+  background-color: #1C6EA4 !important;
+}
+
+.pagination-button:disabled,
+.pagination-button[disabled]{
+  margin-top: 20px;
+  color: white;
+  font-weight: bolder;
+  font-size: medium;
+  min-width: 60px;
+  min-height: 60px;
+  border: solid thin #1C6EA4 !important;
+  background-color: #7EB3FF !important;
 }

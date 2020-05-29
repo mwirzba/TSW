@@ -49,13 +49,14 @@ module.exports.listen = server => {
             }
 
             let chat = await Chat.findOne({
-                $or: [{ user1: user.username }, { user2: user.username }]
+                $or: [
+                    { $and: [{ user1: user.username }, { user2: msg.destinationUser }] },
+                    { $and: [{ user1: msg.destinationUser }, { user2: user.username }] }
+                ]
             });
-
             if (!msg.message) {
                 msg.message = "";
             }
-
             const newMessage = {
                 sendingUser: user.username,
                 message: msg.message,
@@ -72,86 +73,21 @@ module.exports.listen = server => {
                         message: newMessage.message,
                         delivered: newMessage.delivered
                     };
+                    console.log(chat);
                 } else {
                     chat.messages.push(newMessage);
                 }
+                console.log(chat);
                 await chat.save();
             } catch (e) {
                 console.log(e);
             }
-
-            // console.log(chatInDb);
         });
-
-        /*
-        socket.on("chat", async (msg) => {
-            const destUserInDb = await User.findOne({
-                username: msg.destinationUser
-            });
-
-            if (msg.length < 0) {
-                socket.emit("chat", "Message is required");
-            }
-            if (!destUserInDb) {
-                socket.emit("chat", "No user found with given user name.");
-            } else {
-                try {
-                    let chat = await Chat.findOne({
-                        $or: [{ user1: user.username }, { user2: user.username }]
-                    });
-
-                    if (!msg.message) {
-                        msg.message = "";
-                    }
-
-                    const newMessage = {
-                        sendingUser: user.username,
-                        message: msg.message,
-                        delivered: false
-                    };
-
-                    const destUserOnline = onlineUsers.find(
-                        u => u.username === msg.destinationUser
-                    );
-                    if (destUserOnline) {
-                        socket.broadcast
-                            .to(destUserOnline.socketId)
-                            .emit("chat",
-                                {
-                                    sendingUser: user.username,
-                                    message: msg.message
-                                }
-                            );
-                        console.log("WYSLANO do:" + destUserOnline.username);
-                    }
-
-                    if (!chat) {
-                        chat = await new Chat({
-                            user1: user.username,
-                            user2: msg.destinationUser
-                        });
-                        chat.messages = {
-                            sendingUser: user.username,
-                            message: newMessage.message,
-                            delivered: newMessage.delivered
-                        };
-                    } else {
-                        chat.messages.push(newMessage);
-                    }
-                    chat.save().then(() => {
-                        console.log("zapisano");
-                    });
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        });
-        */
 
         socket.on("usersList", async function (data) {
             console.log(data);
             if (data.left === true) {
-                const removeIndex = onlineUsers.findIndex(u => u.username === data.username);
+                const removeIndex = onlineUsers.findIndex(u => u.username === socket.request.user.username);
                 if (removeIndex > -1) {
                     onlineUsers.splice(removeIndex, 1);
                 }
@@ -177,7 +113,12 @@ module.exports.listen = server => {
         socket.on("auction", function (data) {
             if (data.auctionId) {
                 Auction.findById(data.auctionId).then(auction => {
-                    if (auction && (auction.currentPrice < data.newPrice) && auction.endDate > Date.now()) {
+                    if (auction.endDate < Date.now() || auction.archived) {
+                        auction.archived = true;
+                        auction.save().then(auction => {
+                            socket.emit("auction", { auctionId: auction._id, error: "Aukcja już się zakończyła" });
+                        });
+                    } else if (auction && (auction.currentPrice < data.newPrice) && auction.endDate > Date.now()) {
                         auction.currentPrice = data.newPrice;
                         auction.userPrice.push({
                             user: socket.request.user.username,
@@ -190,68 +131,6 @@ module.exports.listen = server => {
                 });
             }
         });
-
-        /*
-        socket.on("newMessages", async function () {
-            if (user.username) {
-                const chats = await Chat.find({
-                    $or: [
-                        { user1: user.username },
-                        { user2: user.username }
-                    ]
-                });
-                const newMesseges = [];
-                chats.forEach((chat, index) => {
-                    chat.messages.forEach((mess, index, messages) => {
-                        if (!mess.delivered && mess.sendingUser !== user.username) {
-                            if (!newMesseges.find(m => m.sendingUser === mess.sendingUser)) {
-                                newMesseges.push({
-                                    sendingUser: mess.sendingUser,
-                                    numberOfMessages: 1
-                                });
-                            } else {
-                                const msgFromUser = newMesseges.findIndex(m => m.sendingUser === mess.sendingUser);
-                                newMesseges[msgFromUser].numberOfMessages++;
-                            }
-                            messages[index] = mess;
-                        }
-                    });
-                });
-                chats.save();
-                io.sockets.emit("newMessages", newMesseges);
-            }
-        }); */
-
-        /*
-        socket.on("chatSelected", async function (chatUser) {
-            console.log("CHATSELECTED");
-
-            /*
-                $or: [
-                    { $and: [{ user1: user.username }, { user2: chatUser }] },
-                    { $and: [{ user1: chatUser }, { user2: user.username }] }
-                ]
-
-            const chat = await Chat.findOne({
-                $or: [{ user1: user.username }, { user2: user.username }]
-            });
-            // console.log(chat);
-
-            // console.log("CHATY ZNALEZIONE");
-            if (chat) {
-                chat.messages.forEach(msg => {
-                    if (!msg.delivered && msg.sendingUser !== user.username) {
-                        msg.delivered = true;
-                    }
-                });
-                chat.save();
-            }
-            /*
-            console.log("CHATY");
-            const chatsedrh = await Chat.find({});
-            console.log(chatsedrh);
-            socket.emit("chatSelected", chat);
-        }); */
     });
 
     return io;

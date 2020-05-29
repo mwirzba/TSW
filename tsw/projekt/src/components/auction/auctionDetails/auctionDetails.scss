@@ -1,6 +1,51 @@
 .auction-details-container {
+  justify-self: center;
   align-self: center;
   margin: auto;
   grid-column-start: 2;
+  display: grid;
+  justify-content: center;
+
+  input {
+    height: 10px;
+  }
+  button {
+    height: 20px;
+    text-align: center;
+  }
 }
 
+.header {
+  color: #FC9A40;
+  font-weight: bolder;
+  font-size: 25px;
+}
+
+.form-border {
+  justify-self: center;
+  height: 580px;
+  width: 400px;
+  display: grid;
+  grid-template-rows: 10% 10% 40% 40px 10% ;
+  grid-row-gap: 20px;
+}
+
+.price-container {
+  height: 50px;
+  width: 100px;
+  display: grid;
+  grid-row-gap: 3px;
+}
+.price {
+  font-size: 30px;
+  text-align: right;
+}
+
+.price-input {
+  display: grid;
+  grid-column-gap: 0;
+}
+
+#newPrice{
+  width: 70px;
+}

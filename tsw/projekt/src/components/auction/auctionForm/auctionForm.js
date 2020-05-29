@@ -7,12 +7,13 @@ export default {
     name: "auctionForm",
     data () {
         return {
-            auctionName: "",
+            auctionName: null,
             endDate: tomorrow,
-            currentPrice: 0,
+            currentPrice: null,
             buyNow: true,
-            description: "",
-            logged: this.$store.state.userData.authenticated
+            description: null,
+            logged: this.$store.state.userData.authenticated,
+            submitted: false
         };
     },
     mounted () {
@@ -30,23 +31,27 @@ export default {
         onsubmit: function () {
             const req = this.getReq();
             try {
-                if (this.$route.params.id) {
-                    console.log("PUT");
-                    this.axios.put("http://localhost:8080/auction/" + this.$route.params.id, req)
-                        .then(response => {
-                            console.log(response);
-                        })
-                        .catch(error => {
-                            console.log(error.response);
-                        });
-                } else {
-                    this.axios.post("http://localhost:8080/auction/", req)
-                        .then(response => {
-                            console.log(response);
-                        })
-                        .catch(error => {
-                            console.log(error.response);
-                        });
+                this.submitted = true;
+                const formValid = this.auctionNameValid && this.descriptionValid && this.currentPriceValid && this.endDateValid;
+                if (formValid) {
+                    if (this.$route.params.id) {
+                        console.log("PUT");
+                        this.axios.put("http://localhost:8080/auction/" + this.$route.params.id, req)
+                            .then(response => {
+                                console.log(response);
+                            })
+                            .catch(error => {
+                                console.log(error.response);
+                            });
+                    } else {
+                        this.axios.post("http://localhost:8080/auction/", req)
+                            .then(response => {
+                                console.log(response);
+                            })
+                            .catch(error => {
+                                console.log(error.response);
+                            });
+                    }
                 }
             } catch (error) {
                 console.log(error);
@@ -55,7 +60,6 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
-                    console.log("TUTAJ");
                     const endDate = Date.parse(rsp.data.endDate);
                     this.auctionName = rsp.data.auctionName;
                     this.currentPrice = rsp.data.currentPrice;
@@ -84,6 +88,20 @@ export default {
                 description: this.description,
                 buyNow: this.buyNow
             };
+        }
+    },
+    computed: {
+        auctionNameValid () {
+            return !!this.auctionName;
+        },
+        descriptionValid () {
+            return !!this.description;
+        },
+        currentPriceValid () {
+            return !isNaN(parseFloat(this.currentPrice)) && !isNaN(this.currentPrice - 0) && this.currentPrice > 0;
+        },
+        endDateValid () {
+            return Date.parse(this.endDate) > Date.now() && !this.$route.params.id;
         }
     }
 };

@@ -36,7 +36,6 @@ const checkAuctionData = async (auctions) => {
     for (const a of auctions) {
         if (a.endDate < Date.now()) {
             a.archived = true;
-            a.auctionBuyer = a.userPrice[a.userPrice.length - 1].user;
             await a.save();
         }
     }
@@ -46,78 +45,88 @@ const checkAuctionData = async (auctions) => {
 router
     .route("/pagination/:page")
     .get(async (req, res) => {
-        const pageSize = 9;
-        let page = req.params.page || 1;
-        if (page < 1) {
-            page = 1;
-        }
-        page = parseInt(page);
-        let auctions = await Auction
-            .find({ archived: false })
-            .skip((pageSize * page) - pageSize)
-            .limit(pageSize);
-
-        auctions = await checkAuctionData(auctions);
-
-        auctions.filter(a => !a.archived);
-
-        const numberOfItems = await Auction.countDocuments();
-        const totalPages = Math.ceil(numberOfItems / pageSize);
-        if (page > totalPages) {
-            page = 1;
-        }
-
-        const rtn = {
-            auctions: auctions,
-            paginationInfo: {
-                numberOfItems: numberOfItems,
-                currentPage: page,
-                totalPages: totalPages,
-                hasPrevious: page !== 1,
-                hasNext: page < totalPages
+        try {
+            const pageSize = 10;
+            let page = req.params.page || 1;
+            if (page < 1) {
+                page = 1;
             }
-        };
-        return res.json(rtn);
+            page = parseInt(page);
+            let auctions = await Auction
+                .find({ archived: false })
+                .skip((pageSize * page) - pageSize)
+                .limit(pageSize);
+
+            auctions = await checkAuctionData(auctions);
+
+            auctions.filter(a => !a.archived);
+
+            const numberOfItems = await Auction.countDocuments({ archived: false });
+            console.log("AUKCJE ILOSC" + numberOfItems);
+            const totalPages = Math.ceil(numberOfItems / pageSize);
+            if (page > totalPages) {
+                page = 1;
+            }
+
+            const rtn = {
+                auctions: auctions,
+                paginationInfo: {
+                    numberOfItems: numberOfItems,
+                    currentPage: page,
+                    totalPages: totalPages,
+                    hasPrevious: page !== 1,
+                    hasNext: page < totalPages
+                }
+            };
+            return res.json(rtn);
+        } catch (e) {
+            console.log(e.message);
+        }
     });
 
 router
     .route("/yourAuctions/auctions/:page")
     .get(async (req, res) => {
-        if (!req.user) {
-            return res.status(HttpStatus.UNAUTHORIZED)
-                .json("You must be logged to see your auctions");
-        }
-        const pageSize = 9;
-        let page = req.params.page || 1;
-        if (page < 1) {
-            page = 1;
-        }
-        page = parseInt(page);
-        let auctions = await Auction
-            .find({ auctionOwner: req.user.username })
-            .skip((pageSize * page) - pageSize)
-            .limit(pageSize);
-
-        auctions = await checkAuctionData(auctions);
-
-        const numberOfItems = await Auction
-            .countDocuments({ auctionOwner: req.user.username });
-
-        const totalPages = Math.ceil(numberOfItems / pageSize);
-        if (page > totalPages) {
-            page = 1;
-        }
-        const rtn = {
-            auctions: auctions,
-            paginationInfo: {
-                numberOfItems: numberOfItems,
-                currentPage: page,
-                totalPages: totalPages,
-                hasPrevious: page !== 1,
-                hasNext: page < totalPages
+        try {
+            console.log("YOUT AUCTIONS");
+            if (!req.user) {
+                return res.status(HttpStatus.UNAUTHORIZED)
+                    .json("You must be logged to see your auctions");
             }
-        };
-        return res.json(rtn);
+            const pageSize = 10;
+            let page = req.params.page || 1;
+            if (page < 1) {
+                page = 1;
+            }
+            page = parseInt(page);
+            let auctions = await Auction
+                .find({ auctionOwner: req.user.username })
+                .skip((pageSize * page) - pageSize)
+                .limit(pageSize);
+
+            auctions = await checkAuctionData(auctions);
+
+            const numberOfItems = await Auction
+                .countDocuments({ auctionOwner: req.user.username });
+
+            const totalPages = Math.ceil(numberOfItems / pageSize);
+            if (page > totalPages) {
+                page = 1;
+            }
+            const rtn = {
+                auctions: auctions,
+                paginationInfo: {
+                    numberOfItems: numberOfItems,
+                    currentPage: page,
+                    totalPages: totalPages,
+                    hasPrevious: page !== 1,
+                    hasNext: page < totalPages
+                }
+            };
+            return res.json(rtn);
+        } catch (e) {
+            console.log(e.message);
+        }
     });
 
 router
@@ -261,12 +270,13 @@ router
                     archived: false
                 });
             } else {
+                console.log(endDate);
                 newAuction = new Auction({
                     auctionName: auctionName,
                     auctionOwner: auctionOwner,
                     currentPrice: currentPrice,
                     description: description,
-                    endDate: endDate,
+                    endDate: Date.parse(endDate),
                     buyNow: false,
                     archived: false,
                     userPrice: []

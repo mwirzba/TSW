@@ -1,34 +1,29 @@
 <template>
   <div class="chat-container">
-      <div class="users-list-container">
-          <h2>Użytkownicy</h2>
-          <ul class="users-list">
-             <li class="users-element" v-for="(user,i) in usersList" :key="user+i">
-                 <a v-on:click="onUserSelected(i)" v-bind:style="[ user.isOnline === true ? {'background-color':'green'} : {'background-color':'red'}]">
-                     {{user.username}}
-                 </a>
-             </li>
-          </ul>
+      <div class="select-container">
+          <select class="select-list" @change="onUserSelected($event)">
+              <option disabled selected>Wybierz użytkownika do czatowania</option>
+              <option v-for="user in usersList" :key="user.username" v-bind:style="user.isOnline ? {'color':'green'} : {'color':'red'}">{{user.username}}</option>
+          </select>
       </div>
       <div class="chat">
-          <div v-if="userToSend.length>0">
-              <h2>{{userToSend}}</h2>
+          <div v-if="messages.length">
               <ul class="chat-list">
-                  <li v-for="(msg,i) in messages" :key="msg+i" class="message">
-                      <p v-bind:style="[ msg.sendingUser === userToSend ? {'text-align':'left'} : {'text-align':'right'}]">
+                  <li v-for="(msg,i) in messages" :key="msg+i" class="chat-element">
+                      <div v-if="msg.sendingUser !== $store.state.userData.username"  v-bind:style="{'text-align':'left'}" class="message-text">
+                          <span class="nick">{{msg.sendingUser}}</span>
+                          <span class="message">{{msg.message}}</span>
+                      </div>
+                      <div v-else v-bind:style="{'text-align':'right'}" class="message">
                           {{msg.message}}
-                      </p>
+                      </div>
                   </li>
               </ul>
-              <form v-on:submit.prevent="onSend" class="chat-form">
-                  <input id="message" type="text" v-model="message">
-                  <button v-on:click="onSend">Wyślij</button>
-              </form>
-          </div>
-          <div v-else>
-              <h1>Wybierz użytkownika aby otworzyć czat.</h1>
           </div>
       </div>
+      <form v-on:submit.prevent="onSend" class="chat-form">
+          <input  class="chat-text-box" type="text" v-model="message">
+      </form>
   </div>
 </template>
 

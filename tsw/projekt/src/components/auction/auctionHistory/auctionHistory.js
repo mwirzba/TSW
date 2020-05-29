@@ -3,7 +3,8 @@ export default {
     data () {
         return {
             auctions: [],
-            paginationInfo: Object
+            paginationInfo: Object,
+            userLogin: this.$store.state.userData.username
         };
     },
     mounted () {
@@ -24,7 +25,8 @@ export default {
                             userPrice: data.auctions[i].userPrice,
                             description: data.auctions[i].description,
                             buyNow: data.auctions[i].buyNow,
-                            archived: data.auctions[i].archived
+                            archived: data.auctions[i].archived,
+                            auctionBuyer: data.auctions[i].auctionBuyer
                         };
                         this.auctions.push(auction);
                     }

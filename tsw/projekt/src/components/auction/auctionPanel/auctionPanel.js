@@ -18,7 +18,6 @@ export default {
             this.fetchData();
             this.socket.on("auction", (data) => {
                 this.auctions.forEach(a => {
-                    console.log("WOWOWOLANIE");
                     if (data.auctionId === a._id) {
                         a.currentPrice = data.newPrice;
                     }
@@ -30,7 +29,6 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/observedAuctions")
                 .then(rsp => {
-                    console.log("TUTAJ PANEL");
                     console.log(rsp);
                     this.auctions = rsp.data;
                 })
@@ -50,6 +48,11 @@ export default {
         },
         beforeDestroy () {
             this.socket.off("auction");
+        }
+    },
+    computed: {
+        inputValid () {
+            return !isNaN(parseFloat(this.newPrice)) && !isNaN(this.newPrice - 0) && this.newPrice > this.auction.currentPrice;
         }
     }
 };
