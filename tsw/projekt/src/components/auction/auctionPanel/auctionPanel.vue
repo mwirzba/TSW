@@ -1,25 +1,20 @@
 <template>
-    <div class="auction-panel-container">
-        <div v-if="auctions.length">
-            <div v-for="(auction,i) in auctions" :key="auction+i">
-                <div class="form-border item">
-                    <h3>{{auction.auctionName}}</h3>
-                    <p>Cena: {{auction.currentPrice}}</p>
-                    <div class="input-group">
-                        <label for="price">Twoja cena</label>
-                        <input id="price" type="text" :value="newPrice">
-                        <div class="error-message">
-                            <span v-if="!inputValid">Nieprawidłowa cena</span>
-                        </div>
-                    </div>
-                    <button v-on:click="onSubmit(auction._id)">Przebij</button>
+    <div v-if="auctions.length" class="list-container">
+        <div v-for="(auction,i) in auctions" :key="auction+i" class="form-border">
+            <p class="header">{{auction.auctionName}}</p>
+            <h3>Cena: {{auction.currentPrice}}</h3>
+            <div class="input-group">
+                <label>Twoja cena</label>
+                <input type="text" v-model="auction.newPrice">
+                <div class="error-message">
+                    <span v-if="auction.errorPrice">Nieprawidłowa cena</span>
                 </div>
             </div>
+            <button v-on:click="onSubmit(auction,i)">Przebij</button>
         </div>
-
-        <div v-else>
-            <h1 style="text-align: center">Nie licytujesz żadnych aukcji.</h1>
-        </div>
+    </div>
+    <div v-else>
+        <h1 style="text-align: center">Nie licytujesz żadnych aukcji.</h1>
     </div>
 </template>
 

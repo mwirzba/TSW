@@ -38,6 +38,7 @@ export default {
                         console.log("PUT");
                         this.axios.put("http://localhost:8080/auction/" + this.$route.params.id, req)
                             .then(response => {
+                                this.$router.push({ name: "yourAuctions", params: { page: "1" } }).then();
                                 console.log(response);
                             })
                             .catch(error => {
@@ -46,6 +47,7 @@ export default {
                     } else {
                         this.axios.post("http://localhost:8080/auction/", req)
                             .then(response => {
+                                this.$router.push({ name: "yourAuctions", params: { page: "1" } }).then();
                                 console.log(response);
                             })
                             .catch(error => {

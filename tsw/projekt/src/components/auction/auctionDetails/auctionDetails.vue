@@ -15,12 +15,12 @@
                     {{auction.description}}
                 </span>
             </div>
-            <div v-if="auction.auctionOwner !== this.$store.state.userData.username && !auction.buyNow" class="price-input">
+            <div class="input-group" v-if="auction.auctionOwner !== this.$store.state.userData.username && !auction.buyNow">
                 <label for="newPrice">Twoja cena</label>
                 <input v-model="newPrice" id="newPrice">
-            </div>
-            <div class="error-message" >
-                <p v-if="!inputValid && submitted">Nieprawidłowa cena</p>
+                <div class="error-message" >
+                    <p v-if="!inputValid && submitted">Nieprawidłowa cena</p>
+                </div>
             </div>
             <button v-on:click="onSubmit"
                     v-if="this.$store.state.userData.authenticated &&

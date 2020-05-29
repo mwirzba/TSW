@@ -1,9 +1,47 @@
-.auction-panel-container {
-  width: 80%;
-  margin: auto;
+
+.header {
+  color: #FC9A40;
+  font-weight: bolder;
+  font-size: 25px;
+}
+
+.form-border{
+  width: 90%;
+}
+
+.list-container{
+  width: 100%;
   grid-column: 2;
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  justify-items: center;
+  display: grid;
+  align-self: center;
+  grid-template-columns: 33.33% 33.33% 33.33%;
+  grid-column-gap: 80px;
+  grid-row-gap: 20px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+@media (max-width: 1300px) {
+  .list-container{
+    width: 100%;
+    display: grid;
+    align-self: center;
+    grid-template-columns: 50% 50%;
+    grid-column-gap: 80px;
+    grid-row-gap: 20px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 880px) {
+  .list-container{
+    width: 100%;
+    display: grid;
+    align-self: center;
+    grid-template-columns: 100%;
+    grid-column-gap: 80px;
+    grid-row-gap: 20px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
 }

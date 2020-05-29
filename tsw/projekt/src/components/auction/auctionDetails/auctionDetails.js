@@ -123,5 +123,4 @@ export default {
             return !isNaN(parseFloat(this.newPrice)) && !isNaN(this.newPrice - 0) && this.newPrice > this.auction.currentPrice;
         }
     }
-
 };

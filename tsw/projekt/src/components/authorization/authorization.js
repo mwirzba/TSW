@@ -8,7 +8,7 @@ export default {
             logged: this.$store.state.userData.authenticated,
             loginMode: true,
             submitted: false,
-            wrongLogin: false
+            invalidLogin: false
         };
     },
     mounted () {
@@ -48,7 +48,7 @@ export default {
                 .catch(error => {
                     console.log(error.response);
                     if (error.status === 401) {
-                        this.wrongLogin = true;
+                        this.invalidLogin = true;
                     }
                 });
         },
@@ -78,7 +78,7 @@ export default {
             return !!this.password;
         },
         loginDataValid () {
-            return this.wrongLogin && !this.passwordValid && !this.loginValid;
+            return this.invalidLogin === true && this.passwordValid === true && this.loginValid === true;
         }
     }
 };

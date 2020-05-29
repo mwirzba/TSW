@@ -33,6 +33,14 @@ export default {
             }).catch(err => {
                 console.log(err);
             });
+        },
+        toogleNavbar: function () {
+            const x = document.getElementById("navbar-container");
+            if (x.className === "navbar-container") {
+                x.className += " responsive";
+            } else {
+                x.className = "navbar-container";
+            }
         }
     },
     computed: {

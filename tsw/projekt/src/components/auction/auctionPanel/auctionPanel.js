@@ -6,7 +6,7 @@ export default {
     data () {
         return {
             auctions: [],
-            newPrice: "",
+            newPrice: null,
             isLogged: this.$store.state.userData.authenticated
         };
     },
@@ -18,8 +18,9 @@ export default {
             this.fetchData();
             this.socket.on("auction", (data) => {
                 this.auctions.forEach(a => {
-                    if (data.auctionId === a._id) {
+                    if (data.auctionId === a.id) {
                         a.currentPrice = data.newPrice;
+                        a.errorPrice = false;
                     }
                 });
             });
@@ -29,8 +30,26 @@ export default {
         fetchData () {
             this.axios.get("http://localhost:8080/auction/observedAuctions")
                 .then(rsp => {
-                    console.log(rsp);
-                    this.auctions = rsp.data;
+                    const data = rsp.data;
+                    console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        const auction = {
+                            auctionOwner: data[i].auctionOwner,
+                            auctionName: data[i].auctionName,
+                            currentPrice: data[i].currentPrice,
+                            endDate: data[i].endDate,
+                            id: data[i]._id,
+                            userPrice: data[i].userPrice,
+                            description: data[i].description,
+                            buyNow: data[i].buyNow,
+                            archived: data[i].archived,
+                            newPrice: null,
+                            errorPrice: false
+                        };
+                        console.log("auction");
+                        this.auctions.push(auction);
+                    }
+                    console.log(this.auctions);
                 })
                 .catch(error => {
                     if (error.response) {
@@ -40,19 +59,20 @@ export default {
                     }
                 });
         },
-        onSubmit: function (id) {
-            this.socket.emit("auction", {
-                auctionId: id,
-                newPrice: this.newPrice
-            });
+        onSubmit: function (auction, index) {
+            this.auctions[index].errorPrice = !this.isValidPrice(auction.newPrice, auction.currentPrice);
+            if (!this.auctions[index].errorPrice) {
+                this.socket.emit("auction", {
+                    auctionId: auction.id,
+                    newPrice: auction.newPrice
+                });
+            }
+        },
+        isValidPrice: function (price, currentPrice) {
+            return !isNaN(parseFloat(price)) && !isNaN(price - 0) && price > currentPrice;
         },
         beforeDestroy () {
             this.socket.off("auction");
-        }
-    },
-    computed: {
-        inputValid () {
-            return !isNaN(parseFloat(this.newPrice)) && !isNaN(this.newPrice - 0) && this.newPrice > this.auction.currentPrice;
         }
     }
 };
