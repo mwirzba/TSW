@@ -7,7 +7,7 @@
                 <span class="price">
                         {{auction.currentPrice}} zł</span>
             </div>
-            <div class="price-container">
+            <div class="desc-container">
                 <span>
                     Opis:
                 </span>
@@ -15,11 +15,12 @@
                     {{auction.description}}
                 </span>
             </div>
-            <div class="input-group" v-if="auction.auctionOwner !== this.$store.state.userData.username && !auction.buyNow">
+            <div class="input-group" style="margin-bottom: 10px" v-if="auction.auctionOwner !== this.$store.state.userData.username && !auction.buyNow">
                 <label for="newPrice">Twoja cena</label>
                 <input v-model="newPrice" id="newPrice">
                 <div class="error-message" >
                     <p v-if="!inputValid && submitted">Nieprawidłowa cena</p>
+                    <p v-if="errorMess">Aukcja już się zakończyła</p>
                 </div>
             </div>
             <button v-on:click="onSubmit"

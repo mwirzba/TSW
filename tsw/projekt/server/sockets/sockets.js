@@ -62,6 +62,11 @@ module.exports.listen = server => {
                 message: msg.message,
                 delivered: false
             };
+
+            if (destUserOnline) {
+                newMessage.delivered = true;
+            }
+
             try {
                 if (!chat) {
                     chat = await new Chat({
@@ -89,6 +94,7 @@ module.exports.listen = server => {
             if (data.left === true) {
                 const removeIndex = onlineUsers.findIndex(u => u.username === socket.request.user.username);
                 if (removeIndex > -1) {
+                    console.log("WYWALONO" + socket.request.user.username);
                     onlineUsers.splice(removeIndex, 1);
                 }
             }
@@ -120,6 +126,7 @@ module.exports.listen = server => {
                         });
                     } else if (auction && (auction.currentPrice < data.newPrice) && auction.endDate > Date.now()) {
                         auction.currentPrice = data.newPrice;
+                        auction.auctionBuyer = socket.request.user.username;
                         auction.userPrice.push({
                             user: socket.request.user.username,
                             price: data.newPrice

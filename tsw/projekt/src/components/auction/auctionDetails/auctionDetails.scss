@@ -23,15 +23,19 @@
 
 .form-border {
   justify-self: center;
-  height: 580px;
   width: 400px;
   display: grid;
   grid-row-gap: 20px;
 }
 
 .price-container {
-  height: 50px;
-  width: 100px;
+   height: 50px;
+   width: 100px;
+   display: grid;
+   grid-row-gap: 3px;
+ }
+
+.desc-container {
   display: grid;
   grid-row-gap: 3px;
 }

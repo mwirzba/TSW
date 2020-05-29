@@ -17,9 +17,9 @@ export default {
     },
     methods: {
         logOut: function () {
+            console.log("Wologowanie");
             this.socket.emit("usersList", {
-                left: true,
-                username: this.$store.state.userData.username
+                left: true
             });
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 const userData = {

@@ -266,6 +266,7 @@ router
                     auctionOwner: auctionOwner,
                     currentPrice: currentPrice,
                     description: description,
+                    auctionBuyer: "",
                     buyNow: true,
                     archived: false
                 });
@@ -278,6 +279,7 @@ router
                     description: description,
                     endDate: Date.parse(endDate),
                     buyNow: false,
+                    auctionBuyer: "",
                     archived: false,
                     userPrice: []
                 });

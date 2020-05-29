@@ -19,8 +19,12 @@ export default {
             this.socket.on("auction", (data) => {
                 this.auctions.forEach(a => {
                     if (data.auctionId === a.id) {
-                        a.currentPrice = data.newPrice;
-                        a.errorPrice = false;
+                        if (data.error) {
+                            a.errorMsg = true;
+                        } else {
+                            a.currentPrice = data.newPrice;
+                            a.errorPrice = false;
+                        }
                     }
                 });
             });
@@ -44,7 +48,8 @@ export default {
                             buyNow: data[i].buyNow,
                             archived: data[i].archived,
                             newPrice: null,
-                            errorPrice: false
+                            errorPrice: false,
+                            errorMsg: null
                         };
                         console.log("auction");
                         this.auctions.push(auction);

@@ -4,7 +4,7 @@
             <h1 v-if="loginMode">Zaloguj się</h1>
             <h1 v-else>Zajerestruj się</h1>
             <div class="error-message">
-                <span v-if="!loginDataValid">Zły login albo hasło.</span>
+                <span v-if="!loginDataValid && submitted">Zły login albo hasło.</span>
             </div>
             <div class="input-group">
                 <label for="login">Login</label>

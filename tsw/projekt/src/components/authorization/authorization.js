@@ -78,7 +78,7 @@ export default {
             return !!this.password;
         },
         loginDataValid () {
-            return this.invalidLogin === true && this.passwordValid === true && this.loginValid === true;
+            return !this.invalidLogin;
         }
     }
 };

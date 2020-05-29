@@ -14,27 +14,27 @@ module.exports = {
         "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
         "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
         indent: [
-            "warn",
+            "error",
             4
         ],
         "linebreak-style": [
-            "warn",
+            "error",
             "unix"
         ],
         quotes: [
-            "warn",
+            "error",
             "double"
         ],
         semi: [
-            "warn",
+            "error",
             "always"
         ],
         "brace-style": [
-            "warn",
+            "error",
             "1tbs"
         ],
         "comma-dangle": [
-            "warn",
+            "error",
             "never"
         ]
     }

@@ -32,7 +32,12 @@ export default {
             const req = this.getReq();
             try {
                 this.submitted = true;
-                const formValid = this.auctionNameValid && this.descriptionValid && this.currentPriceValid && this.endDateValid;
+                let formValid = null;
+                if (this.$route.params.id) {
+                    formValid = this.auctionNameValid && this.descriptionValid && this.currentPriceValid;
+                } else {
+                    formValid = this.auctionNameValid && this.descriptionValid && this.currentPriceValid && this.endDateValid;
+                }
                 if (formValid) {
                     if (this.$route.params.id) {
                         console.log("PUT");

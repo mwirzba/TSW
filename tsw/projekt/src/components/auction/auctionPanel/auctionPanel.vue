@@ -8,6 +8,7 @@
                 <input type="text" v-model="auction.newPrice">
                 <div class="error-message">
                     <span v-if="auction.errorPrice">Nieprawidłowa cena</span>
+                    <span v-if="auction.errorMsg">Aukcja sie skonczyła</span>
                 </div>
             </div>
             <button v-on:click="onSubmit(auction,i)">Przebij</button>

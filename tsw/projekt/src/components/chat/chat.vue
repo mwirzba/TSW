@@ -8,7 +8,7 @@
       </div>
       <div class="chat">
           <div v-if="messages.length">
-              <ul class="chat-list">
+              <ul class="chat-list" id="chat-list">
                   <li v-for="(msg,i) in messages" :key="msg+i" class="chat-element">
                       <div v-if="msg.sendingUser !== $store.state.userData.username"  v-bind:style="{'text-align':'left'}" class="message-text">
                           <span class="nick">{{msg.sendingUser}}</span>

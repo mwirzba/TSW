@@ -22,7 +22,7 @@ export default {
     methods: {
         onSend: function () {
             console.log("ELO");
-            if (this.message !== "") {
+            if (this.message !== "" && this.userToSend !== "") {
                 this.socket.emit("chat", {
                     destinationUser: this.userToSend,
                     message: this.message
@@ -37,9 +37,10 @@ export default {
             }
         },
         scrollToEnd () {
-            const container = document.querySelector(".chat-list");
+            const container = this.$el.querySelector("#chat-list");
             if (container !== null) {
-                container.scrollTop = container.scrollHeight;
+                console.log("scroll");
+                container.scrollTop = container.scrollHeight + 10;
             }
         },
         onUserSelected: function (event) {
