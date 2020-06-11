@@ -36,7 +36,6 @@ router.post("/login", [
                 username: passportUser.username
             });
         });
-        console.log("ZALOGOWANO");
     })(req, res, next);
 }).all(rejectMethod);
 
@@ -95,7 +94,7 @@ router
             await user.save();
             res.sendStatus(HttpStatus.OK);
         } catch (err) {
-            res.status(HttpStatus.BAD_REQUEST).json({
+            return res.status(HttpStatus.BAD_REQUEST).json({
                 ErrorMessage: err.message
             });
         }

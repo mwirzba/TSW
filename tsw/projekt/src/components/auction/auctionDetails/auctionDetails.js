@@ -70,7 +70,7 @@ export default {
                     {
                         auctionId: this.auction.id
                     }
-                ).then(rsp => {
+                ).then(() => {
                 }).catch(err => {
                     console.log(err);
                 });

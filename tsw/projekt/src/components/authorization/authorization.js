@@ -33,6 +33,11 @@ export default {
                 })
                 .catch(error => {
                     console.log(error.response);
+                    if (error.response.status === 401) {
+                        console.log(error.response);
+
+                        this.invalidLogin = true;
+                    }
                 });
         },
         onRegister: function () {
@@ -47,7 +52,7 @@ export default {
                 })
                 .catch(error => {
                     console.log(error.response);
-                    if (error.status === 401) {
+                    if (error.response.status === 400) {
                         this.invalidLogin = true;
                     }
                 });
