@@ -14,8 +14,8 @@
                     <span v-if="auction.errorPrice">Nieprawidłowa cena</span>
                     <span v-if="auction.errorMsg">Aukcja sie skonczyła</span>
                 </div>
-                <button v-on:click="onSubmit(auction,i)" :disabled="auction.auctionBuyer === userName">Przebij</button>
             </div>
+            <button v-on:click="onSubmit(auction,i)" :disabled="auction.auctionBuyer === userName">Przebij</button>
         </div>
     </div>
     <div v-else class="empty">

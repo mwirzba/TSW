@@ -1,7 +1,8 @@
 .navbar-container {
   background-color: #1C6EA4;
   overflow: hidden;
-  min-height: 70px;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  justify-content: center;
 
   .navbar-link {
     float: left;
@@ -11,6 +12,7 @@
     padding: 14px 16px;
     text-decoration: none;
     font-size: 25px;
+    vertical-align: middle;
   }
 
   .navbar-link-right {

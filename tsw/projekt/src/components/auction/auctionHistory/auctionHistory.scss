@@ -63,11 +63,12 @@ a:hover{
 .pagination-button:disabled,
 .pagination-button[disabled]{
   margin-top: 20px;
-  color: white;
+  color: grey;
   font-weight: bolder;
   font-size: medium;
   min-width: 60px;
   min-height: 60px;
   border: solid thin #1C6EA4 !important;
   background-color: #7EB3FF !important;
+  cursor: not-allowed;
 }

@@ -6,7 +6,6 @@ export default {
     data () {
         return {
             auctions: [],
-            newPrice: null,
             isLogged: this.$store.state.userData.authenticated
         };
     },
@@ -25,9 +24,9 @@ export default {
                             a.auctionBuyer = data.auctionBuyer;
                             a.currentPrice = data.newPrice;
                             a.errorPrice = false;
-                            this.newPrice = this.auction.currentPrice + 1;
-                            if (this.auction.auctionBuyer === this.$store.state.userPrice.username) {
-                                this.newPrice = this.auction.currentPrice;
+                            a.newPrice = parseInt(a.currentPrice) + 1;
+                            if (a.auctionBuyer === this.$store.state.userData.username) {
+                                a.newPrice = a.currentPrice;
                             }
                         }
                     }
@@ -41,10 +40,12 @@ export default {
                 .then(rsp => {
                     const data = rsp.data;
                     for (let i = 0; i < data.length; i++) {
-                        let userPrice = data[i].currentPrice + 1;
+                        let userPrice = parseInt(data[i].currentPrice) + 1;
                         let userBid = false;
                         if (data[i].userPrice.filter(u => u.user === this.$store.state.userData.username).length > 0) {
                             userBid = true;
+                        }
+                        if (data[i].auctionBuyer === this.$store.state.userData.username) {
                             userPrice = data[i].currentPrice;
                         }
                         const auction = {

@@ -26,8 +26,8 @@ export default {
                     } else {
                         this.auction.currentPrice = data.newPrice;
                         this.auction.auctionBuyer = data.auctionBuyer;
-                        this.newPrice = this.auction.currentPrice + 1;
-                        if (this.auction.auctionBuyer === this.$store.state.userPrice.username) {
+                        this.newPrice = parseInt(this.auction.currentPrice) + 1;
+                        if (this.auction.auctionBuyer === this.$store.state.userData.username) {
                             this.newPrice = this.auction.currentPrice;
                         }
                         this.submitted = false;
@@ -41,10 +41,12 @@ export default {
             this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
                 .then((rsp) => {
                     this.auction = this.getAuctionData(rsp.data);
-                    this.newPrice = this.auction.currentPrice + 1;
+                    this.newPrice = parseInt(this.auction.currentPrice) + 1;
                     console.log(this.auction);
                     if (!this.auction.buyNow && this.auction.userPrice.filter(u => u.user === this.$store.state.userData.username).length > 0) {
                         this.userBid = true;
+                    }
+                    if (this.auction.auctionBuyer === this.$store.state.userData.username) {
                         this.newPrice = this.auction.currentPrice;
                     }
                 }).catch(err => {

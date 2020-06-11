@@ -8,7 +8,8 @@ export default {
             logged: this.$store.state.userData.authenticated,
             loginMode: true,
             submitted: false,
-            invalidLogin: false
+            invalidLogin: false,
+            errorMsg: ""
         };
     },
     mounted () {
@@ -35,7 +36,7 @@ export default {
                     console.log(error.response);
                     if (error.response.status === 401) {
                         console.log(error.response);
-
+                        this.errorMsg = "Zły login albo hasło.";
                         this.invalidLogin = true;
                     }
                 });
@@ -54,6 +55,7 @@ export default {
                     console.log(error.response);
                     if (error.response.status === 400) {
                         this.invalidLogin = true;
+                        this.errorMsg = "Login jest już używany.";
                     }
                 });
         },
