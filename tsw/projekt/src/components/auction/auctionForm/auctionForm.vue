@@ -19,7 +19,7 @@
             </div>
             <div class="input-group">
                 <label for="description">Opis</label>
-                <input id="description" type="text" v-model="description">
+                <textarea id="description" v-model="description"/>
                 <div class="error-message">
                     <span v-if="!descriptionValid && submitted">Opis wymagany.</span>
                 </div>

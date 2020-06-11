@@ -7,6 +7,12 @@
 
 .form-border{
   width: 90%;
+  justify-self: center;
+}
+
+.empty {
+  grid-column: 2;
+  text-align: center;
 }
 
 .list-container{

@@ -4,7 +4,7 @@ export default {
     name: "Navbar",
     created () {
         this.socket = io("http://localhost:8080", { reconnection: false });
-        this.$store.commit("retrieveUserData");
+        this.$store.dispatch("retrieveUserData").then();
     },
     mounted () {
         this.axios.get("http://localhost:8080/authorization/isLogged")
@@ -18,9 +18,7 @@ export default {
     methods: {
         logOut: function () {
             console.log("Wologowanie");
-            this.socket.emit("usersList", {
-                left: true
-            });
+            this.socket.emit("userLeft");
             this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
                 const userData = {
                     authenticated: false,

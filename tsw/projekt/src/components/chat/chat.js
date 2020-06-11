@@ -17,48 +17,7 @@ export default {
         };
     },
     created () {
-        this.socket = io.connect("http://localhost:8080", { reconnection: false });
-    },
-    methods: {
-        onSend: function () {
-            console.log("ELO");
-            if (this.message !== "" && this.userToSend !== "") {
-                this.socket.emit("chat", {
-                    destinationUser: this.userToSend,
-                    message: this.message
-                });
-                console.log(this.$store.state.username);
-                this.messages.push({
-                    sendingUser: this.$store.state.userData.username,
-                    message: this.message
-                });
-                this.scrollToEnd();
-                this.message = "";
-            }
-        },
-        scrollToEnd () {
-            const container = this.$el.querySelector("#chat-list");
-            if (container !== null) {
-                console.log("scroll");
-                container.scrollTop = container.scrollHeight + 10;
-            }
-        },
-        onUserSelected: function (event) {
-            console.log("WYWOwolano");
-            // this.userToSend = this.usersList[index].username;
-            this.userToSend = event.target.value;
-            this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
-                console.log(chats);
-                this.messages = [];
-                chats.data.messages.forEach(m => {
-                    this.messages.push({
-                        sendingUser: m.sendingUser,
-                        message: m.message
-                    });
-                });
-                console.log(this.messages);
-            }).catch(err => console.log(err));
-        }
+        this.socket = io.connect("http://localhost:8080");
     },
     mounted () {
         this.socket.on("usersList", (users) => {
@@ -69,9 +28,13 @@ export default {
             this.messages.push(msg);
             this.scrollToEnd();
         });
-        this.socket.emit("usersList", {
-            left: false
+        this.socket.on("userJoined", () => {
+            this.socket.emit("usersList");
         });
+        this.socket.on("userLeft", () => {
+            this.socket.emit("usersList");
+        });
+        this.socket.emit("userJoined");
         this.axios.put("http://localhost:8080/chat/newMessages")
             .then(messages => {
                 console.log("nowe wiadomosci");
@@ -80,13 +43,51 @@ export default {
                 this.messages = messages.data;
             }).catch(err => console.log(err));
     },
+    methods: {
+        onSend: function () {
+            if (this.message !== "" && this.userToSend !== "") {
+                this.socket.emit("chat", {
+                    destinationUser: this.userToSend,
+                    message: this.message
+                });
+                console.log(this.$store.state.userData.username);
+                this.messages.push({
+                    sendingUser: this.$store.state.userData.username,
+                    message: this.message
+                });
+                this.scrollToEnd();
+                this.message = "";
+            }
+        },
+        scrollToEnd () {
+            setTimeout(() => {
+                const container = this.$el.querySelector(".chat");
+                if (container !== null) {
+                    container.scrollTop = container.scrollHeight;
+                    console.log(container.scrollTop);
+                }
+            }, 200);
+        },
+        onUserSelected: function (event) {
+            this.userToSend = event.target.value;
+            this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
+                console.log(chats);
+                this.messages = [];
+                chats.data.messages.forEach(m => {
+                    this.messages.push({
+                        sendingUser: m.sendingUser,
+                        message: m.message
+                    });
+                });
+                this.scrollToEnd();
+            }).catch(err => console.log(err));
+        }
+    },
     beforeDestroy () {
-        console.log("DESTROYED");
         this.socket.off("usersList");
         this.socket.off("chat");
-        this.socket.emit("usersList", {
-            left: true,
-            username: this.$store.state.userData.username
-        });
+        this.socket.emit("userLeft");
+        // this.socket.emit("usersList");
+        this.socket.disconnect();
     }
 };

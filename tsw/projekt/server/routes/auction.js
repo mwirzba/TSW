@@ -132,6 +132,7 @@ router
 router
     .route("/observedAuctions")
     .get(async (req, res) => {
+        console.log("OBSERVED AUTCION");
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED)
                 .json("You must be logged to see your observed auctions");
@@ -304,7 +305,6 @@ router
         check("currentPrice").isNumeric().withMessage("Price must be a number."),
         check("currentPrice").custom((value) => value > 0).withMessage("Price must be greater than zero."),
         check("description").exists().isString().isLength(1),
-        check("endDate").exists(),
         check("auctionName").exists().isString().isLength(1).withMessage("Auction name is required.")
     ],
     async (req, res) => {

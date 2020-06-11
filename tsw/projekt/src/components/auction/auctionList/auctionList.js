@@ -31,10 +31,8 @@ export default {
                         buyNow: data.auctions[i].buyNow,
                         archived: data.auctions[i].archived
                     };
-                    console.log(auction);
                     this.paginationInfo = data.paginationInfo;
                     this.auctions.push(auction);
-                    console.log(this.$store.state.userData.username);
                 }
             }).catch(error => {
                 if (error.response) {

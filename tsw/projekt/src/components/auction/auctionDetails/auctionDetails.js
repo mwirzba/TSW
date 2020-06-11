@@ -7,7 +7,8 @@ export default {
             auction: Object,
             newPrice: 0,
             submitted: false,
-            errorMess: null
+            errorMess: null,
+            userBid: false
         };
     },
     created () {
@@ -24,6 +25,11 @@ export default {
                         this.errorMess = true;
                     } else {
                         this.auction.currentPrice = data.newPrice;
+                        this.auction.auctionBuyer = data.auctionBuyer;
+                        this.newPrice = this.auction.currentPrice + 1;
+                        if (this.auction.auctionBuyer === this.$store.state.userPrice.username) {
+                            this.newPrice = this.auction.currentPrice;
+                        }
                         this.submitted = false;
                     }
                 }
@@ -36,6 +42,11 @@ export default {
                 .then((rsp) => {
                     this.auction = this.getAuctionData(rsp.data);
                     this.newPrice = this.auction.currentPrice + 1;
+                    console.log(this.auction);
+                    if (!this.auction.buyNow && this.auction.userPrice.filter(u => u.user === this.$store.state.userData.username).length > 0) {
+                        this.userBid = true;
+                        this.newPrice = this.auction.currentPrice;
+                    }
                 }).catch(err => {
                     console.log(err);
                 });
@@ -83,6 +94,8 @@ export default {
                     auctionName: data.auctionName,
                     currentPrice: data.currentPrice,
                     description: data.description,
+                    auctionBuyer: data.auctionBuyer,
+                    userPrice: data.userPrice,
                     buyNow: data.buyNow,
                     archived: data.archived,
                     endDate: data.endDate,
@@ -121,6 +134,7 @@ export default {
         },
         beforeDestroy () {
             this.socket.off("auction");
+            this.socket.disconnect();
         }
     },
     computed: {

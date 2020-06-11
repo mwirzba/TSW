@@ -5,14 +5,13 @@
   grid-column-start: 2;
   display: grid;
   justify-content: center;
+  width: 100%;
+  grid-template-columns: 100%;
 
   input {
     height: 10px;
   }
-  button {
-    height: 20px;
-    text-align: center;
-  }
+
 }
 
 .header {
@@ -21,11 +20,13 @@
   font-size: 25px;
 }
 
+.auction-status-info {
+
+}
+
 .form-border {
   justify-self: center;
-  width: 400px;
-  display: grid;
-  grid-row-gap: 20px;
+  min-width: 30%;
 }
 
 .price-container {

@@ -15,10 +15,25 @@ module.exports.listen = server => {
                 userId: socket.request.user.id,
                 socketId: socket.id
             };
+        }
+
+        socket.on("userJoined", () => {
             if (!onlineUsers.find(u => u.username === socket.request.user.username)) {
                 onlineUsers.push(user);
             }
-        }
+            io.sockets.emit("userJoined");
+            console.log(onlineUsers);
+        });
+
+        socket.on("userLeft", () => {
+            const removeIndex = onlineUsers.findIndex(u => u.username === socket.request.user.username);
+            if (removeIndex > -1) {
+                console.log("WYWALONO" + socket.request.user.username);
+                onlineUsers.splice(removeIndex, 1);
+            }
+            io.sockets.emit("userLeft");
+            console.log(onlineUsers);
+        });
 
         socket.on("chat", async (msg) => {
             const destUserOnline = onlineUsers.find(
@@ -41,11 +56,11 @@ module.exports.listen = server => {
                     .to(destUserOnline.socketId)
                     .emit("chat",
                         {
-                            sendingUser: user.username,
+                            sendingUser: socket.request.user.username,
                             message: msg.message
                         }
                     );
-                console.log("WYSLANO do:" + destUserOnline.username);
+                console.log("WYSLANO do:" + destUserOnline.username + "id: " + destUserOnline.socketId);
             }
 
             let chat = await Chat.findOne({
@@ -78,26 +93,16 @@ module.exports.listen = server => {
                         message: newMessage.message,
                         delivered: newMessage.delivered
                     };
-                    console.log(chat);
                 } else {
                     chat.messages.push(newMessage);
                 }
-                console.log(chat);
                 await chat.save();
             } catch (e) {
                 console.log(e);
             }
         });
 
-        socket.on("usersList", async function (data) {
-            console.log(data);
-            if (data.left === true) {
-                const removeIndex = onlineUsers.findIndex(u => u.username === socket.request.user.username);
-                if (removeIndex > -1) {
-                    console.log("WYWALONO" + socket.request.user.username);
-                    onlineUsers.splice(removeIndex, 1);
-                }
-            }
+        socket.on("usersList", async function () {
             if (user.username) {
                 const registeredUsers = await User.find({});
                 const userNamesWithStatus = [];
@@ -132,7 +137,7 @@ module.exports.listen = server => {
                             price: data.newPrice
                         });
                         auction.save().then(auction => {
-                            io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice });
+                            io.sockets.emit("auction", { auctionId: auction._id, newPrice: data.newPrice, auctionBuyer: auction.auctionBuyer });
                         });
                     }
                 });

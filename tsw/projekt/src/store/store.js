@@ -13,17 +13,20 @@ export const store = new Vuex.Store({
     mutations: {
         setUserData (state, userData) {
             state.userData = userData;
-        },
-        retrieveUserData (state) {
-            if (localStorage.getItem("store")) {
-                Vue.axios.get("http://localhost:8080/authorization/userState")
-                    .then(rsp => {
-                        state.userData = rsp.data;
-                    });
-            }
         }
     },
     getters: {
 
+    },
+    actions: {
+        async retrieveUserData (context) {
+            try {
+                const rsp = await Vue.axios.get("http://localhost:8080/authorization/userState");
+                const userData = rsp.data;
+                context.commit("setUserData", userData);
+            } catch (e) {
+                console.log(e.message);
+            }
+        }
     }
 });

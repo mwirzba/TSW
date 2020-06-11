@@ -14,7 +14,7 @@ export default {
         this.socket = io("http://localhost:8080", { reconnection: false });
     },
     mounted () {
-        if (this.isLogged) {
+        if (this.$store.state.userData.authenticated) {
             this.fetchData();
             this.socket.on("auction", (data) => {
                 this.auctions.forEach(a => {
@@ -22,8 +22,13 @@ export default {
                         if (data.error) {
                             a.errorMsg = true;
                         } else {
+                            a.auctionBuyer = data.auctionBuyer;
                             a.currentPrice = data.newPrice;
                             a.errorPrice = false;
+                            this.newPrice = this.auction.currentPrice + 1;
+                            if (this.auction.auctionBuyer === this.$store.state.userPrice.username) {
+                                this.newPrice = this.auction.currentPrice;
+                            }
                         }
                     }
                 });
@@ -35,26 +40,30 @@ export default {
             this.axios.get("http://localhost:8080/auction/observedAuctions")
                 .then(rsp => {
                     const data = rsp.data;
-                    console.log(data);
                     for (let i = 0; i < data.length; i++) {
+                        let userPrice = data[i].currentPrice + 1;
+                        let userBid = false;
+                        if (data[i].userPrice.filter(u => u.user === this.$store.state.userData.username).length > 0) {
+                            userBid = true;
+                            userPrice = data[i].currentPrice;
+                        }
                         const auction = {
                             auctionOwner: data[i].auctionOwner,
                             auctionName: data[i].auctionName,
+                            auctionBuyer: data[i].auctionBuyer,
                             currentPrice: data[i].currentPrice,
                             endDate: data[i].endDate,
                             id: data[i]._id,
-                            userPrice: data[i].userPrice,
                             description: data[i].description,
                             buyNow: data[i].buyNow,
                             archived: data[i].archived,
-                            newPrice: null,
+                            newPrice: userPrice,
                             errorPrice: false,
-                            errorMsg: null
+                            errorMsg: null,
+                            userBid: userBid
                         };
-                        console.log("auction");
                         this.auctions.push(auction);
                     }
-                    console.log(this.auctions);
                 })
                 .catch(error => {
                     if (error.response) {
@@ -75,9 +84,15 @@ export default {
         },
         isValidPrice: function (price, currentPrice) {
             return !isNaN(parseFloat(price)) && !isNaN(price - 0) && price > currentPrice;
-        },
-        beforeDestroy () {
-            this.socket.off("auction");
+        }
+    },
+    beforeDestroy () {
+        this.socket.off("auction");
+        this.socket.disconnect();
+    },
+    computed: {
+        userName () {
+            return this.$store.state.userData.username;
         }
     }
 };

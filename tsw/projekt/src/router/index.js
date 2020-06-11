@@ -62,7 +62,7 @@ const routes = [
         meta: { requiresLogin: true }
     },
     {
-        path: "/auctions/:id",
+        path: "/auctions/details/:id",
         name: "auctionDetails",
         component: AuctionDetails
     },
@@ -89,11 +89,9 @@ const router = new VueRouter({
     routes
 });
 
-router.beforeEach((to, from, next) => {
-    store.commit("retrieveUserData");
+router.beforeEach(async (to, from, next) => {
+    await store.dispatch("retrieveUserData");
     if (to.matched.some(record => record.meta.requiresLogin)) {
-        console.log(store.state.userData);
-        console.log("TUTAJ ROUTE");
         if (store.state.userData.authenticated === false) {
             next({
                 path: "/login",
