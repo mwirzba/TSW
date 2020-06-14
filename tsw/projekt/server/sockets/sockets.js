@@ -22,17 +22,14 @@ module.exports.listen = server => {
                 onlineUsers.push(user);
             }
             io.sockets.emit("userJoined");
-            console.log(onlineUsers);
         });
 
         socket.on("userLeft", () => {
             const removeIndex = onlineUsers.findIndex(u => u.username === socket.request.user.username);
             if (removeIndex > -1) {
-                console.log("WYWALONO" + socket.request.user.username);
                 onlineUsers.splice(removeIndex, 1);
             }
             io.sockets.emit("userLeft");
-            console.log(onlineUsers);
         });
 
         socket.on("chat", async (msg) => {
@@ -60,7 +57,7 @@ module.exports.listen = server => {
                             message: msg.message
                         }
                     );
-                console.log("WYSLANO do:" + destUserOnline.username + "id: " + destUserOnline.socketId);
+                // console.log("WYSLANO do:" + destUserOnline.username + "id: " + destUserOnline.socketId);
             }
 
             let chat = await Chat.findOne({
