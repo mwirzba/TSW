@@ -124,7 +124,7 @@ module.exports.listen = server => {
         socket.on("auction", function (data) {
             if (data.auctionId) {
                 Auction.findById(data.auctionId).then(auction => {
-                    if (auction.endDate < Date.now() || auction.archived) {
+                    if (auction.endDate.toISOString() < new Date().toISOString() || auction.archived) {
                         auction.archived = true;
                         auction.save().then(auction => {
                             socket.emit("auction", { auctionId: auction._id, error: "Aukcja już się zakończyła" });

@@ -8,11 +8,10 @@ export default {
         };
     },
     mounted () {
-        const reqPath = "http://localhost:8080/auction/auctionHistory/" + this.$router.currentRoute.params.page;
+        const reqPath = "/auction/auctionHistory/" + this.$router.currentRoute.params.page;
         try {
             this.axios.get(reqPath)
                 .then(rsp => {
-                    console.log(rsp.data);
                     const data = rsp.data;
                     for (let i = 0; i < data.auctions.length; i++) {
                         const auction = {
@@ -31,7 +30,6 @@ export default {
                         this.auctions.push(auction);
                     }
                     this.paginationInfo = data.paginationInfo;
-                    console.log(this.auctions);
                 }).catch(error => {
                     if (error.response) {
                         console.log(error.response.data);
@@ -74,20 +72,14 @@ export default {
         onNextPage () {
             if (this.paginationInfo.hasNext !== false) {
                 const num = (this.paginationInfo.currentPage + 1).toString();
-                let name = "auctionsByPage";
-                if (this.$router.currentRoute.name === "yourAuctions") {
-                    name = "yourAuctions";
-                }
+                const name = "auctionHistory";
                 this.$router.push({ name: name, params: { page: num } }).then();
             }
         },
         onPrevPage () {
             if (this.paginationInfo.hasPrevious !== false) {
                 const num = (this.paginationInfo.currentPage - 1).toString();
-                let name = "auctionsByPage";
-                if (this.$router.currentRoute.name === "yourAuctions") {
-                    name = "yourAuctions";
-                }
+                const name = "auctionHistory";
                 this.$router.push({ name: name, params: { page: num } }).then();
             }
         },

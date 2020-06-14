@@ -3,23 +3,21 @@ import io from "socket.io-client";
 export default {
     name: "Navbar",
     created () {
-        this.socket = io("http://localhost:8080", { reconnection: false });
+        this.socket = io("", { reconnection: false });
         this.$store.dispatch("retrieveUserData").then();
     },
     mounted () {
-        this.axios.get("http://localhost:8080/authorization/isLogged")
+        this.axios.get("/authorization/isLogged")
             .then(res => {
                 this.$store.state.userData.authenticated = res.data;
-                console.log();
             }).catch(err => {
                 console.log("Error:" + err);
             });
     },
     methods: {
         logOut: function () {
-            console.log("Wologowanie");
             this.socket.emit("userLeft");
-            this.axios.get("http://localhost:8080/authorization/logout").then((resp) => {
+            this.axios.get("/authorization/logout").then((resp) => {
                 const userData = {
                     authenticated: false,
                     username: ""

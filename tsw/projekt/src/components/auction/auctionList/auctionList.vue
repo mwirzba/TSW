@@ -5,7 +5,7 @@
             <p class="header">{{auction.auctionName}}</p>
             <h3>Cena: {{auction.currentPrice}} zł</h3>
             <p>Sprzedawca: {{auction.auctionOwner}}</p>
-            <p v-if="!auction.buyNow">Zakończenie aukcji: {{auction.endViewDate.date}}</p>
+            <p v-if="!auction.buyNow">Zakończenie aukcji: {{auction.endViewDate.date}}  {{auction.endViewDate.hour}}:{{auction.endViewDate.minute}}</p>
             <router-link v-if="!auction.archived" :to="{ name: 'auctionDetails' , params: { id: auction.id } }">Zobacz</router-link>
             <router-link v-if="!auction.userPrice.length && auction.auctionOwner === userLogin" :to="{ name: 'editAuction' , params: { id: auction.id } }">Edytuj</router-link>
         </div>

@@ -1,3 +1,4 @@
+import format from "date-fns/format";
 
 const today = new Date();
 const tomorrow = new Date(today);
@@ -40,20 +41,17 @@ export default {
                 }
                 if (formValid) {
                     if (this.$route.params.id) {
-                        console.log("PUT");
-                        this.axios.put("http://localhost:8080/auction/" + this.$route.params.id, req)
+                        this.axios.put("/auction/" + this.$route.params.id, req)
                             .then(response => {
                                 this.$router.push({ name: "yourAuctions", params: { page: "1" } }).then();
-                                console.log(response);
                             })
                             .catch(error => {
                                 console.log(error.response);
                             });
                     } else {
-                        this.axios.post("http://localhost:8080/auction/", req)
+                        this.axios.post("/auction/", req)
                             .then(response => {
                                 this.$router.push({ name: "yourAuctions", params: { page: "1" } }).then();
-                                console.log(response);
                             })
                             .catch(error => {
                                 console.log(error.response);
@@ -65,7 +63,7 @@ export default {
             }
         },
         fetchData () {
-            this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
+            this.axios.get("/auction/" + this.$route.params.id)
                 .then((rsp) => {
                     const endDate = Date.parse(rsp.data.endDate);
                     this.auctionName = rsp.data.auctionName;
@@ -95,6 +93,10 @@ export default {
                 description: this.description,
                 buyNow: this.buyNow
             };
+        },
+        setDate: function (d) {
+            this.endDate = new Date(d);
+            return format(new Date(d), "yyyy-MM-dd'T'hh:mm");
         }
     },
     computed: {
@@ -108,7 +110,10 @@ export default {
             return !isNaN(parseFloat(this.currentPrice)) && !isNaN(this.currentPrice - 0) && this.currentPrice > 0;
         },
         endDateValid () {
-            return Date.parse(this.endDate) > Date.now() && !this.$route.params.id;
+            return new Date(this.endDate) > new Date() && !this.$route.params.id;
+        },
+        getDataValue () {
+            return format(new Date(this.endDate), "yyyy-MM-dd'T'HH:mm");
         }
     }
 };

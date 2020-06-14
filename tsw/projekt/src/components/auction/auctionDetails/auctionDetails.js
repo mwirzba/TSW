@@ -4,15 +4,19 @@ export default {
     name: "auctionDetails",
     data () {
         return {
-            auction: Object,
+            auction: null,
             newPrice: 0,
             submitted: false,
             errorMess: null,
-            userBid: false
+            userBid: false,
+            currentTime: new Date()
         };
     },
     created () {
-        this.socket = io("http://localhost:8080", { reconnection: false });
+        setInterval(() => {
+            this.currentTime = new Date();
+        }, 10000);
+        this.socket = io("", { reconnection: false });
     },
     mounted () {
         if (this.$route.params.id) {
@@ -38,11 +42,10 @@ export default {
     },
     methods: {
         fetchData () {
-            this.axios.get("http://localhost:8080/auction/" + this.$route.params.id)
+            this.axios.get("/auction/" + this.$route.params.id)
                 .then((rsp) => {
                     this.auction = this.getAuctionData(rsp.data);
                     this.newPrice = parseInt(this.auction.currentPrice) + 1;
-                    console.log(this.auction);
                     if (!this.auction.buyNow && this.auction.userPrice.filter(u => u.user === this.$store.state.userData.username).length > 0) {
                         this.userBid = true;
                     }
@@ -56,9 +59,8 @@ export default {
         onSubmit () {
             this.submitted = true;
             if (this.auction.buyNow) {
-                this.axios.get("http://localhost:8080/auction/buyNow/" + this.auction.id)
+                this.axios.get("/auction/buyNow/" + this.auction.id)
                     .then(rsp => {
-                        console.log(rsp);
                         this.$router.push({ name: "auctionHistory", params: { page: "1" } }).then();
                     }).catch(err => {
                         console.log(err);
@@ -68,7 +70,7 @@ export default {
                     auctionId: this.auction.id,
                     newPrice: this.newPrice
                 });
-                this.axios.put("http://localhost:8080/addObservedAuctionToUser",
+                this.axios.put("/addObservedAuctionToUser",
                     {
                         auctionId: this.auction.id
                     }
@@ -107,7 +109,7 @@ export default {
             }
             return auction;
         },
-        getDate: (dateToFormat) => {
+        getDate: function (dateToFormat) {
             const date = new Date(dateToFormat);
             let day = date.getDate();
             if (day < 10) {
@@ -133,15 +135,18 @@ export default {
                 hour: hour,
                 minute: minute
             };
-        },
-        beforeDestroy () {
-            this.socket.off("auction");
-            this.socket.disconnect();
         }
+    },
+    beforeDestroy () {
+        this.socket.off("auction");
+        this.socket.disconnect();
     },
     computed: {
         inputValid () {
             return !isNaN(parseFloat(this.newPrice)) && !isNaN(this.newPrice - 0) && this.newPrice > this.auction.currentPrice;
+        },
+        auctionTimeOut () {
+            return new Date(this.auction.endDate) <= this.currentTime;
         }
     }
 };

@@ -21,7 +21,7 @@ export const store = new Vuex.Store({
     actions: {
         async retrieveUserData (context) {
             try {
-                const rsp = await Vue.axios.get("http://localhost:8080/authorization/userState");
+                const rsp = await Vue.axios.get("/authorization/userState");
                 const userData = rsp.data;
                 context.commit("setUserData", userData);
             } catch (e) {

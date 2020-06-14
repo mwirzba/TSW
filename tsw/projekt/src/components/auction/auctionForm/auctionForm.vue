@@ -32,8 +32,8 @@
                 </div>
                 <div v-if="!buyNow" class="input-group">
                     <label for="endDate">Data zakończenia aukcji</label>
-                    <input id="endDate" type="date"  class="date-input" :value="endDate && endDate.toISOString().split('T')[0]"
-                           @input="endDate = $event.target.valueAsDate">
+                    <input id="endDate" type="datetime-local"  class="date-input" :value="getDataValue"
+                           @input="setDate($event.target.value)">
                     <p v-if="!endDateValid && submitted && !this.$route.params.id" class="error-message">Zła data</p>
                 </div>
             </div>

@@ -1,8 +1,5 @@
-// import io from "socket.io-client";
-// import Vue from "vue";
 
 import io from "socket.io-client";
-// const socket = io.connect("http://localhost:8080");
 
 export default {
     name: "chat",
@@ -17,11 +14,10 @@ export default {
         };
     },
     created () {
-        this.socket = io.connect("http://localhost:8080");
+        this.socket = io.connect("");
     },
     mounted () {
         this.socket.on("usersList", (users) => {
-            console.log(users);
             this.usersList = users.filter(u => u.username !== this.$store.state.userData.username);
         });
         this.socket.on("chat", (msg) => {
@@ -35,11 +31,8 @@ export default {
             this.socket.emit("usersList");
         });
         this.socket.emit("userJoined");
-        this.axios.put("http://localhost:8080/chat/newMessages")
+        this.axios.put("/chat/newMessages")
             .then(messages => {
-                console.log("nowe wiadomosci");
-                console.log(messages.data);
-                console.log(messages.data.length);
                 this.messages = messages.data;
             }).catch(err => console.log(err));
     },
@@ -50,7 +43,6 @@ export default {
                     destinationUser: this.userToSend,
                     message: this.message
                 });
-                console.log(this.$store.state.userData.username);
                 this.messages.push({
                     sendingUser: this.$store.state.userData.username,
                     message: this.message
@@ -64,22 +56,22 @@ export default {
                 const container = this.$el.querySelector(".chat");
                 if (container !== null) {
                     container.scrollTop = container.scrollHeight;
-                    console.log(container.scrollTop);
                 }
             }, 200);
         },
         onUserSelected: function (event) {
             this.userToSend = event.target.value;
-            this.axios.get("http://localhost:8080/chat/" + this.userToSend).then(chats => {
-                console.log(chats);
+            this.axios.get("/chat/" + this.userToSend).then(chats => {
                 this.messages = [];
-                chats.data.messages.forEach(m => {
-                    this.messages.push({
-                        sendingUser: m.sendingUser,
-                        message: m.message
+                if (chats.data) {
+                    chats.data.messages.forEach(m => {
+                        this.messages.push({
+                            sendingUser: m.sendingUser,
+                            message: m.message
+                        });
                     });
-                });
-                this.scrollToEnd();
+                    this.scrollToEnd();
+                }
             }).catch(err => console.log(err));
         }
     },

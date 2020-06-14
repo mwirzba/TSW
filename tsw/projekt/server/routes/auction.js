@@ -14,7 +14,7 @@ const checkDateErrors = (endDate, auctionToUpdate) => {
             location: "body"
         });
     }
-    if (Date.parse(endDate) < Date.now()) {
+    if (new Date(endDate).toISOString() < new Date().toISOString()) {
         errors.push({
             msg: "End date cannot be before than today's date!",
             param: "endDate",
@@ -34,7 +34,8 @@ const checkDateErrors = (endDate, auctionToUpdate) => {
 
 const checkAuctionData = async (auctions) => {
     for (const a of auctions) {
-        if (a.endDate < Date.now()) {
+        console.log(a.auctionName + " :: " + a.endDate + "::" + a.archived);
+        if (!a.buyNow && a.endDate.toISOString() < new Date().toISOString() && !a.archived) {
             a.archived = true;
             await a.save();
         }
@@ -142,7 +143,10 @@ router
         if (usr.observedAuctions) {
             for (const id of usr.observedAuctions) {
                 const auction = await Auction.findOne({ $and: [{ _id: id }, { archived: false }, { buyNow: false }] });
-                if (auction) {
+                if (auction && !auction.buyNow && auction.endDate.toISOString() < new Date().toISOString() && !auction.archived) {
+                    auction.archived = true;
+                    await auction.save();
+                } else if (auction) {
                     observedAuctions.push(auction);
                 }
             }
@@ -158,32 +162,32 @@ router
             return res.status(HttpStatus.UNAUTHORIZED)
                 .json("You must be logged to see your auctions histories");
         }
-        const pageSize = 9;
+        const pageSize = 10;
         let page = req.params.page || 1;
         if (page < 1) {
             page = 1;
         }
-        console.log(page);
         page = parseInt(page);
-        let auctions = await Auction
-            .find({ archived: true })
-            .skip((pageSize * page) - pageSize)
-            .limit(pageSize);
+        let auctions = await Auction.find({ archived: true });
 
         auctions = await checkAuctionData(auctions);
+
+        console.log("WSZYSTKIE");
+        auctions.forEach(a => console.log(a.auctionName + "::" + a.endDate));
+        console.log("WSZYSTKIE");
 
         auctions = auctions.filter(a => {
             return a.auctionBuyer === req.user.username ||
                 a.userPrice.find(u => u.user === req.user.username) !== undefined;
         });
 
-        let allAuctions = await Auction.find({ archived: true });
-        allAuctions = allAuctions.filter(a => {
-            return a.auctionBuyer === req.user.username ||
-                a.userPrice.find(u => u.user === req.user.username) !== undefined;
-        });
+        console.log("WSZYSTKIE2");
+        auctions.forEach(a => console.log(a.auctionName + "::" + a.endDate));
+        const numberOfItems = auctions.length;
+        console.log("WSZYSTKIE2");
 
-        const numberOfItems = allAuctions.length;
+        auctions = auctions.slice((pageSize * page) - pageSize);
+        auctions = auctions.slice(0, pageSize);
 
         const totalPages = Math.ceil(numberOfItems / pageSize);
         if (page > totalPages) {
@@ -200,6 +204,7 @@ router
                 hasNext: page < totalPages
             }
         };
+        console.log(rtn);
         return res.json(rtn);
     });
 
@@ -278,7 +283,7 @@ router
                     auctionOwner: auctionOwner,
                     currentPrice: currentPrice,
                     description: description,
-                    endDate: Date.parse(endDate),
+                    endDate: new Date(endDate).toISOString(),
                     buyNow: false,
                     auctionBuyer: "",
                     archived: false,
@@ -315,7 +320,7 @@ router
             if (!req.params.auctionId) {
                 return res.sendStatus(HttpStatus.BAD_REQUEST);
             }
-            let errors = validationResult(req);
+            const errors = validationResult(req);
             console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
@@ -336,9 +341,6 @@ router
             }
             const auctionToUpdate = await Auction.findById(req.params.auctionId);
             if (auctionToUpdate) {
-                if (!body.buyNow) {
-                    errors = checkDateErrors(body.endDate, auctionToUpdate);
-                }
                 if (errors.length > 0) {
                     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
                 }
@@ -348,9 +350,6 @@ router
                 auctionToUpdate.auctionName = body.auctionName;
                 auctionToUpdate.description = body.description;
                 auctionToUpdate.currentPrice = body.currentPrice;
-                if (body.buyNow === false) {
-                    auctionToUpdate.endDate = body.endDate;
-                }
                 const auctionInDb = await auctionToUpdate.save();
                 return res.json(auctionInDb);
             } else {
@@ -372,6 +371,11 @@ router
                 return res.sendStatus(HttpStatus.UNPROCESSABLE_ENTITY);
             }
             if (rtn) {
+                if (!rtn.buyNow && rtn.endDate.toISOString() < new Date().toISOString() && !rtn.archived) {
+                    console.log(rtn.endDate);
+                    rtn.archived = true;
+                    await rtn.save();
+                }
                 return res.json(rtn);
             } else {
                 return res.sendStatus(HttpStatus.NOT_FOUND);

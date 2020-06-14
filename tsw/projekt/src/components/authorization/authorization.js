@@ -13,7 +13,6 @@ export default {
         };
     },
     mounted () {
-        console.log("MOUNTED");
         this.loginMode = this.$router.currentRoute.name === "login";
     },
     methods: {
@@ -22,9 +21,8 @@ export default {
                 username: this.username,
                 password: this.password
             };
-            this.axios.post("http://localhost:8080/authorization/login", req)
+            this.axios.post("/authorization/login", req)
                 .then(response => {
-                    console.log(response);
                     const userData = {
                         authenticated: response.data.isLogged,
                         username: response.data.username
@@ -33,9 +31,7 @@ export default {
                     this.$router.push({ name: "auctionsByPage", params: { page: "1" } }).then();
                 })
                 .catch(error => {
-                    console.log(error.response);
                     if (error.response.status === 401) {
-                        console.log(error.response);
                         this.errorMsg = "Zły login albo hasło.";
                         this.invalidLogin = true;
                     }
@@ -46,9 +42,8 @@ export default {
                 username: this.username,
                 password: this.password
             };
-            this.axios.post("http://localhost:8080/authorization/register", req)
+            this.axios.post("/authorization/register", req)
                 .then(response => {
-                    console.log(response);
                     this.$router.push({ name: "login", query: { redirect: "/login" } });
                 })
                 .catch(error => {
@@ -72,7 +67,7 @@ export default {
             }
         },
         onSend: function () {
-            this.axios.get("http://localhost:8080/home").then((rsp) => {
+            this.axios.get("/home").then((rsp) => {
                 console.log(rsp);
             });
         }

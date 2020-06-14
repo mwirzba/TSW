@@ -9,10 +9,9 @@ export default {
         };
     },
     mounted () {
-        let reqPath = "http://localhost:8080/auction/pagination/" + this.$router.currentRoute.params.page;
+        let reqPath = "/auction/pagination/" + this.$router.currentRoute.params.page;
         if (this.$router.currentRoute.name === "yourAuctions") {
-            console.log();
-            reqPath = "http://localhost:8080/auction/yourAuctions/auctions/" + this.$router.currentRoute.params.page;
+            reqPath = "/auction/yourAuctions/auctions/" + this.$router.currentRoute.params.page;
             this.userAuctions = true;
         }
         this.axios.get(reqPath)
@@ -46,7 +45,6 @@ export default {
     methods: {
         getDate (dateToFormat) {
             const date = new Date(dateToFormat);
-
             let day = date.getDate();
             if (day < 10) {
                 day = "0" + day;
@@ -55,10 +53,21 @@ export default {
             if (month < 10) {
                 month = "0" + month;
             }
+            let hour = date.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            let minute = date.getMinutes();
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
             const year = date.getFullYear();
             const dateString = day + "/" + month + "/" + year;
+
             return {
-                date: dateString
+                date: dateString,
+                hour: hour,
+                minute: minute
             };
         },
         onNextPage () {

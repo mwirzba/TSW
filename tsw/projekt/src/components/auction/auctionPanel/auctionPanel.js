@@ -6,11 +6,15 @@ export default {
     data () {
         return {
             auctions: [],
-            isLogged: this.$store.state.userData.authenticated
+            isLogged: this.$store.state.userData.authenticated,
+            currentTime: new Date()
         };
     },
     created () {
-        this.socket = io("http://localhost:8080", { reconnection: false });
+        this.socket = io("", { reconnection: false });
+        setInterval(() => {
+            this.currentTime = new Date();
+        }, 10000);
     },
     mounted () {
         if (this.$store.state.userData.authenticated) {
@@ -36,7 +40,7 @@ export default {
     },
     methods: {
         fetchData () {
-            this.axios.get("http://localhost:8080/auction/observedAuctions")
+            this.axios.get("/auction/observedAuctions")
                 .then(rsp => {
                     const data = rsp.data;
                     for (let i = 0; i < data.length; i++) {
@@ -61,7 +65,8 @@ export default {
                             newPrice: userPrice,
                             errorPrice: false,
                             errorMsg: null,
-                            userBid: userBid
+                            userBid: userBid,
+                            endViewDate: this.getDate(data[i].endDate)
                         };
                         this.auctions.push(auction);
                     }
@@ -74,6 +79,9 @@ export default {
                     }
                 });
         },
+        auctionArchived (endDate) {
+            return new Date(endDate) <= this.currentTime;
+        },
         onSubmit: function (auction, index) {
             this.auctions[index].errorPrice = !this.isValidPrice(auction.newPrice, auction.currentPrice);
             if (!this.auctions[index].errorPrice) {
@@ -85,6 +93,33 @@ export default {
         },
         isValidPrice: function (price, currentPrice) {
             return !isNaN(parseFloat(price)) && !isNaN(price - 0) && price > currentPrice;
+        },
+        getDate: function (dateToFormat) {
+            const date = new Date(dateToFormat);
+            let day = date.getDate();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            let month = date.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            let hour = date.getHours();
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            let minute = date.getMinutes();
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+            const year = date.getFullYear();
+            const dateString = day + "/" + month + "/" + year;
+
+            return {
+                date: dateString,
+                hour: hour,
+                minute: minute
+            };
         }
     },
     beforeDestroy () {
