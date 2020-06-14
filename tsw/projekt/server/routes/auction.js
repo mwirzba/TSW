@@ -163,9 +163,12 @@ router
             page = 1;
         }
         page = parseInt(page);
-        let auctions = await Auction.find({ archived: true });
 
-        auctions = await checkAuctionData(auctions);
+        let auctions = await Auction.find({ buyNow: false });
+        await checkAuctionData(auctions);
+
+        auctions = await Auction.find({ archived: true });
+
         auctions = auctions.filter(a => {
             return a.auctionBuyer === req.user.username ||
                 a.userPrice.find(u => u.user === req.user.username) !== undefined;
@@ -215,10 +218,10 @@ router
         }
         const auction = await Auction.findById(req.params.auctionId);
         if (auction.auctionOwner === req.user.username) {
-            res.status(HttpStatus.UNAUTHORIZED).json("You can not buy your own auction product.");
+            return res.status(HttpStatus.UNAUTHORIZED).json("You can not buy your own auction product.");
         }
         if (auction.archived === true) {
-            res.status(HttpStatus.UNAUTHORIZED).json("That auction is no longer available.");
+            return res.status(HttpStatus.UNAUTHORIZED).json("That auction is no longer available.");
         }
         if (auction && auction.buyNow === true) {
             auction.archived = true;

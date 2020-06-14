@@ -75,15 +75,15 @@ app.use(function (req, res, next) {
 
 app.set("trust proxy", 1);
 
-const server = require("./https")(app);
+// const server = require("./https")(app);
 
-server.listen(port, () => {
+const serv = app.listen(port, () => {
     console.log(`Serwer dostępny na porcie ${port}`);
 });
 
 const passportSocketIo = require("passport.socketio");
 
-const io = require("./sockets/sockets").listen(server);
+const io = require("./sockets/sockets").listen(serv);
 
 io.use(passportSocketIo.authorize({
     cookieParser: cookieParser,

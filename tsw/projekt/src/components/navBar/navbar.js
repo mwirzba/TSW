@@ -3,7 +3,7 @@ import io from "socket.io-client";
 export default {
     name: "Navbar",
     created () {
-        this.socket = io("", { reconnection: false });
+        this.socket = io("", { reconnection: false }, { transports: ["websocket"] });
         this.$store.dispatch("retrieveUserData").then();
     },
     mounted () {
@@ -48,5 +48,9 @@ export default {
                 return newValue;
             }
         }
+    },
+    beforeDestroy () {
+        this.socket.emit("userLeft");
+        this.socket.disconnect();
     }
 };
