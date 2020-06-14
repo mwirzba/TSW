@@ -34,7 +34,6 @@ const checkDateErrors = (endDate, auctionToUpdate) => {
 
 const checkAuctionData = async (auctions) => {
     for (const a of auctions) {
-        console.log(a.auctionName + " :: " + a.endDate + "::" + a.archived);
         if (!a.buyNow && a.endDate.toISOString() < new Date().toISOString() && !a.archived) {
             a.archived = true;
             await a.save();
@@ -63,7 +62,6 @@ router
             auctions.filter(a => !a.archived);
 
             const numberOfItems = await Auction.countDocuments({ archived: false });
-            console.log("AUKCJE ILOSC" + numberOfItems);
             const totalPages = Math.ceil(numberOfItems / pageSize);
             if (page > totalPages) {
                 page = 1;
@@ -89,7 +87,6 @@ router
     .route("/yourAuctions/auctions/:page")
     .get(async (req, res) => {
         try {
-            console.log("YOUT AUCTIONS");
             if (!req.user) {
                 return res.status(HttpStatus.UNAUTHORIZED)
                     .json("You must be logged to see your auctions");
@@ -133,7 +130,6 @@ router
 router
     .route("/observedAuctions")
     .get(async (req, res) => {
-        console.log("OBSERVED AUTCION");
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED)
                 .json("You must be logged to see your observed auctions");
@@ -157,7 +153,6 @@ router
 router
     .route("/auctionHistory/:page")
     .get(async (req, res) => {
-        console.log("HISTORIA");
         if (!req.user) {
             return res.status(HttpStatus.UNAUTHORIZED)
                 .json("You must be logged to see your auctions histories");
@@ -171,21 +166,12 @@ router
         let auctions = await Auction.find({ archived: true });
 
         auctions = await checkAuctionData(auctions);
-
-        console.log("WSZYSTKIE");
-        auctions.forEach(a => console.log(a.auctionName + "::" + a.endDate));
-        console.log("WSZYSTKIE");
-
         auctions = auctions.filter(a => {
             return a.auctionBuyer === req.user.username ||
                 a.userPrice.find(u => u.user === req.user.username) !== undefined;
         });
 
-        console.log("WSZYSTKIE2");
-        auctions.forEach(a => console.log(a.auctionName + "::" + a.endDate));
         const numberOfItems = auctions.length;
-        console.log("WSZYSTKIE2");
-
         auctions = auctions.slice((pageSize * page) - pageSize);
         auctions = auctions.slice(0, pageSize);
 
@@ -204,7 +190,6 @@ router
                 hasNext: page < totalPages
             }
         };
-        console.log(rtn);
         return res.json(rtn);
     });
 
@@ -277,7 +262,6 @@ router
                     archived: false
                 });
             } else {
-                console.log(endDate);
                 newAuction = new Auction({
                     auctionName: auctionName,
                     auctionOwner: auctionOwner,
@@ -321,7 +305,6 @@ router
                 return res.sendStatus(HttpStatus.BAD_REQUEST);
             }
             const errors = validationResult(req);
-            console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
             }
@@ -372,7 +355,6 @@ router
             }
             if (rtn) {
                 if (!rtn.buyNow && rtn.endDate.toISOString() < new Date().toISOString() && !rtn.archived) {
-                    console.log(rtn.endDate);
                     rtn.archived = true;
                     await rtn.save();
                 }

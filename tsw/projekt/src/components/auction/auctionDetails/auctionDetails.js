@@ -16,7 +16,7 @@ export default {
         setInterval(() => {
             this.currentTime = new Date();
         }, 10000);
-        this.socket = io("", { reconnection: false });
+        this.socket = io("", { reconnection: true });
     },
     mounted () {
         if (this.$route.params.id) {

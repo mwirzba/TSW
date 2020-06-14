@@ -10,13 +10,13 @@
             </div>
             <div class="input-group">
                 <label>Twoja cena</label>
-                <input type="text" v-model="auction.newPrice" :disabled="auction.auctionBuyer === userName || auctionArchived(auction.endDate)">
+                <input type="text" v-model="auction.newPrice" :disabled="!auction.buyNow && auction.auctionBuyer === userName || new Date(auction.endDate) <= currentTime">
                 <div class="error-message">
                     <span v-if="auction.errorPrice">Nieprawidłowa cena</span>
-                    <span v-if="auction.errorMsg || auctionArchived(auction.endDate)">Aukcja sie zakończyła.</span>
+                    <span v-if="auction.errorMsg ||  new Date(auction.endDate) <= currentTime">Aukcja sie zakończyła.</span>
                 </div>
             </div>
-            <button v-on:click="onSubmit(auction,i)" :disabled="auction.auctionBuyer === userName || auctionArchived(auction.endDate)">LICYTUJ</button>
+            <button v-on:click="onSubmit(auction,i)" :disabled="!auction.buyNow && auction.auctionBuyer === userName || new Date(auction.endDate) <= currentTime">LICYTUJ</button>
         </div>
     </div>
     <div v-else class="empty">

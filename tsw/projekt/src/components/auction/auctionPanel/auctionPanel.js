@@ -7,14 +7,15 @@ export default {
         return {
             auctions: [],
             isLogged: this.$store.state.userData.authenticated,
-            currentTime: new Date()
+            currentTime: new Date(),
+            intervalTimer: null
         };
     },
     created () {
-        this.socket = io("", { reconnection: false });
-        setInterval(() => {
+        this.socket = io("", { reconnection: true }, { transports: ["websocket"] });
+        this.intervalTimer = setInterval(() => {
             this.currentTime = new Date();
-        }, 10000);
+        }, 3000);
     },
     mounted () {
         if (this.$store.state.userData.authenticated) {
@@ -80,6 +81,8 @@ export default {
                 });
         },
         auctionArchived (endDate) {
+            console.log(new Date(endDate) <= this.currentTime);
+            console.log(new Date(endDate) + ":" + this.currentTime);
             return new Date(endDate) <= this.currentTime;
         },
         onSubmit: function (auction, index) {
@@ -123,8 +126,9 @@ export default {
         }
     },
     beforeDestroy () {
-        this.socket.off("auction");
         this.socket.disconnect();
+        this.socket.off("auction");
+        clearInterval(this.intervalTimer);
     },
     computed: {
         userName () {

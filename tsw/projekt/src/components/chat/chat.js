@@ -14,7 +14,7 @@ export default {
         };
     },
     created () {
-        this.socket = io.connect("");
+        this.socket = io.connect("", { reconnection: true }, { transports: ["websocket"] });
     },
     mounted () {
         this.socket.on("usersList", (users) => {
